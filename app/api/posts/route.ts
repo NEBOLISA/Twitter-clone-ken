@@ -9,7 +9,13 @@ import Post from "@/lib/models/Post";
 import Like from "@/lib/models/Like";
 import { ObjectId } from "mongodb";
 import mongoose from "mongoose";
-
+import Retweet from "@/lib/models/Retweet";
+interface UpdatedPostType {
+    _id: string;
+    liked: boolean;
+    retweeted: boolean;
+    [key: string]: any;
+}
 export async function GET(request: Request) {
     try {
         await initMongoose()
@@ -19,18 +25,24 @@ export async function GET(request: Request) {
        
         if (!id) {
             const Posts = await Post.find().populate('author').sort({ createdAt: -1 }).exec()
-            //  const postsLikedByMe = await Like.find({
-            //     userId,
-            //     postId:Posts.map(post=>post?._id)
-            //  })
-            // const idsLikedByMe = postsLikedByMe.map((post)=>post.postId)
-            return NextResponse.json({ Posts}, { status: 200 })
+            const userRetweets = await Retweet.find({userId})
+            const userLikes = await Like.find({userId})
+               const likedPostsSet =  new Set (userLikes.map((like)=> like.postId.toString()))
+               const retweetedPostsSet =  new Set (userRetweets.map((retweet)=> retweet.postId.toString()))
+            
+
+            const updatedPosts = Posts.map((post:UpdatedPostType) => ({
+                ...post.toObject(),
+                liked: likedPostsSet.has(post._id.toString()),
+                retweeted: retweetedPostsSet.has(post._id.toString())
+            }));  
+            return NextResponse.json({ Posts:updatedPosts}, { status: 200 })
         }
         if (id) {
 
             const post = await Post.findById(id).populate('author').exec()
-
-            return NextResponse.json({ post });
+           
+            return NextResponse.json({ post }, { status: 200 });
         }
 
 

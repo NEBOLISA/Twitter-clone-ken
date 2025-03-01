@@ -1,13 +1,15 @@
 import React from 'react'
 
 import { ReactNode } from 'react';
+import Sidebar from './sidebar';
 
 const Layout = ({ children }: { children: ReactNode }) => {
     return (
-        <div className=' flex min-h-screen w-screen '>
-            <div className="w-[28%] border-l  border   border-twitterBorder ">
+        <div className=' flex min-h-screen w-screen  '>
+            <div className="w-[26%] flex  justify-center  border-l  border   border-twitterBorder ">
                 {/* <Sidebar /> */}
-                <p>left</p>
+                {/* <p>left</p> */}
+                <Sidebar/>
             </div>
             <main className="flex-1">
                 {children}

@@ -2,6 +2,7 @@
 import Layout from '@/app/components/layout';
 import PostContent from '@/app/components/postContent';
 import TweetActionsMenu from '@/app/components/tweetActionsMenu';
+import TweetReply from '@/app/components/tweetReply';
 import { useAppContext } from '@/app/contexts/AppContext';
 import useUserInfo from '@/app/hooks/useUserInfo';
 import { postsType } from '@/app/page';
@@ -32,7 +33,6 @@ const PostDetail = () => {
     }
 
 
-
   }
   useEffect(() => {
     if (!id) {
@@ -43,13 +43,14 @@ const PostDetail = () => {
       getSinglePost()
 
     }
-  }, [userInfo])
+  }, [])
   const moveToHome = () => {
-    router.back()
+    router.replace("/")
   }
+
   return (
     <Layout>
-   <div className='p-3 '>
+   <div className='p-3 min-h-screen max-h-screen overflow-y-auto '>
       <div className='flex items-center gap-8 mb-5'>
 
         <IoArrowBackOutline className='w-5 h-5 cursor-pointer' onClick={moveToHome} />
@@ -60,7 +61,12 @@ const PostDetail = () => {
         {isViewPostOptionsOpen && <TweetActionsMenu menuRef={menuRef} />}
         <PostContent post={post} postDetail isViewPostOptionsOpen={isViewPostOptionsOpen} setIsViewPostOptionsOpen={setIsViewPostOptionsOpen} />
       </div> : <div className='w-full h-screen flex items-center justify-center'>Loading...</div>}
+      <div className='w-full'>
+    <TweetReply userName='kene' profilePic={userInfo?.image!}/>
     </div>
+    </div>
+   
+    
     </Layout>
     
   )

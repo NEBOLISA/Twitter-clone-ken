@@ -14,6 +14,8 @@ import { useAppContext } from "./contexts/AppContext";
 import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Layout from "./components/layout";
+
+
 TimeAgo.addLocale(en)
 export interface postsType {
 
@@ -37,14 +39,16 @@ interface RetweetType {
 }
 
 export default function Home() {
+
     const { posts, setPosts } = useAppContext();
     const [isOptionsOpen, setIsOptionsOpen] = useState(false)
     const { userInfo, userInfoStatus, setUserInfo, setUserInfoStatus } = useUserInfo()
     const [openOptionMenu, setOpenOptionMenu] = useState("")
     const router = useRouter()
     const { data: session } = useSession()
-  
+   
     useEffect(() => {
+
 
         getPosts()
     }, [userInfo])
@@ -57,31 +61,23 @@ export default function Home() {
     }
 
     const getPosts = async () => {
-        if(!userInfo){
+        if (!userInfo) {
+
+
+
             return;
         }
         const { data: postsResponse } = await axios.get("/api/posts", { params: { userId: userInfo?._id } });
-        const { data: retweetsResponse } = await axios.get("/api/posts/retweet");
-        const { data: likesResponse } = await axios.get("/api/posts/like");
+       
 
-        const updatedPosts = postsResponse?.Posts.map((post: any) => {
-            const hasRetweet = retweetsResponse.postRetweeted.some((retweet: any) => retweet?.postId === post?._id);
-            const hasLike = likesResponse.postLiked.some((like: any) => like?.postId === post?._id);
-
-            return {
-                ...post,
-                retweeted: hasRetweet,
-                liked: hasLike
-            };
-        });
-
-        setPosts(updatedPosts)
+        setPosts(postsResponse?.Posts);
     }
-    // if (!userInfo) {
-    //     router.push("/login")
-    //     return;
-        
-    // }
+
+    useEffect(() => {
+        if (userInfoStatus === "unauthenticated") {
+            router.push("/login");
+        }
+    }, [userInfoStatus, router]);
 
     if (userInfoStatus === "loading") {
 
@@ -97,13 +93,14 @@ export default function Home() {
 
         return <UserNameForm />
     }
-   
+
 
     return (
         <Layout>
 
 
             <div className=" min-h-screen max-h-screen overflow-y-auto relative ">
+
 
                 <h1 className="font-bold text-lg p-4">
                     Home
@@ -112,16 +109,17 @@ export default function Home() {
                 <div className="">
 
 
-                    {posts.length > 0 && posts.map((post) => (
+                    {
+                    posts.length > 0 && posts.map((post) => (
                         <div className="border-t relative  border-twitterBorder pl-5 pr-3 py-2" key={post?._id}>
 
 
-                            <PostContent isOptionsOpen={isOptionsOpen} post={post} setIsOptionsOpen={setIsOptionsOpen} openOptionMenu={openOptionMenu} setOpenOptionMenu={setOpenOptionMenu} />
+                            <PostContent onLike={()=>{getPosts()}} isOptionsOpen={isOptionsOpen} post={post} setIsOptionsOpen={setIsOptionsOpen} openOptionMenu={openOptionMenu} setOpenOptionMenu={setOpenOptionMenu} />
                         </div>
                     ))}
 
                 </div>
-
+               
                 <div onClick={handleLogOut} className="px-3  absolute bottom-2  left-[50%] -translate-x-[50%] py-1 w-max rounded-full bg-white"><button className="text-black font-semibold">Logout</button></div>
             </div>
         </Layout>

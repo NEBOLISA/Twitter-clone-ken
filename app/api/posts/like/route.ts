@@ -33,27 +33,27 @@ export async function GET(request: Request) {
 
 
 
-// export async function POST(request: Request,{ params }: { params: { id: string } }) {
-//     try {
-//         await initMongoose()
+export async function POST(request: Request,{ params }: { params: { id: string } }) {
+    try {
+        await initMongoose()
        
-//         const id = params.id
-//         const postId = id
+        const id = params.id
+        const postId = id
 
-//         const { userId } = await request.json();
+        const { userId } = await request.json();
        
 
-//         const likeExists = await Like.findOne({ postId:id, userId });
-//         if (likeExists) {
+        const likeExists = await Like.findOne({ postId:id, userId });
+        if (likeExists) {
           
-//             return NextResponse.json({ success: false, message: `You have unliked  this post` }, { status: 200 });
-//         }
-//         await Like.create({ postId:id, userId });
-//         await Post.findByIdAndUpdate(postId, { $inc: { likes: 1 } });
-//         return NextResponse.json({ success: true, message: `Like successful`, data:{userId,postId} }, { status: 200 });
-//     } catch (error) {
-//         const err = error as any;
-//         return NextResponse.json({ success: false, message: `An error occured`, error: err.message }, { status: 500 });
-//     }
+            return NextResponse.json({ success: false, message: `You have unliked  this post` }, { status: 200 });
+        }
+        await Like.create({ postId:id, userId });
+        await Post.findByIdAndUpdate(postId, { $inc: { likes: 1 } });
+        return NextResponse.json({ success: true, message: `Like successful`, data:{userId,postId} }, { status: 200 });
+    } catch (error) {
+        const err = error as any;
+        return NextResponse.json({ success: false, message: `An error occured`, error: err.message }, { status: 500 });
+    }
 
-// }
+}

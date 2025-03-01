@@ -74,6 +74,7 @@ const PostContent = ({ post, onLike, openOptionMenu, setOpenOptionMenu, isOption
             setIsViewPostOptionsOpen!(true)
         } else {
             setOpenOptionMenu!(post?._id!)
+           
         }
 
 
@@ -83,7 +84,7 @@ const PostContent = ({ post, onLike, openOptionMenu, setOpenOptionMenu, isOption
     return (
         <>
             {!postDetail && <Link href={`/${post?.author?.userName}/status/${post?._id}`} className='flex gap-2 '>
-                {openOptionMenu && <TweetActionsMenu menuRef={menuRef} />}
+                {openOptionMenu == post?._id && <TweetActionsMenu menuRef={menuRef} />}
                 <div onClick={handleImageClick} className='z-40' >
                     <div className='rounded-full w-10 overflow-hidden' >
 
@@ -120,7 +121,7 @@ const PostContent = ({ post, onLike, openOptionMenu, setOpenOptionMenu, isOption
             </Link>}
             {postDetail &&
                 <div className='relative'>
-                    {isViewPostOptionsOpen && <TweetActionsMenu menuRef={menuRef} />}
+                    {isViewPostOptionsOpen == post?._id && <TweetActionsMenu menuRef={menuRef} />}
                     <div className='flex gap-2 '>
                         <div onClick={handleImageClick} className='z-40' >
                             <div className='rounded-full w-10 overflow-hidden' >

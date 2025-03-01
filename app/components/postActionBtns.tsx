@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { BsChat } from "react-icons/bs";
 import { AiOutlineRetweet } from "react-icons/ai";
 
@@ -14,6 +14,7 @@ import RetweetMenu from './retweetMenu';
 
 import { useAppContext } from '../contexts/AppContext';
 import FlipNumbers from 'react-flip-numbers';
+import { usePostContext } from '../contexts/PostContext';
 interface PostActionBtnsProps {
     singlePost?: boolean
     post: postsType | undefined
@@ -31,35 +32,40 @@ export interface PostStateProps {
 
 }
 
-const PostActionBtns = ({ singlePost, post, onLike }: PostActionBtnsProps) => {
+const PostActionBtns = ({ post, onLike, singlePost }: PostActionBtnsProps) => {
     const { userInfo } = useUserInfo()
-    const { menuRef, buttonRef } = useAppContext();
+    const retweetMenuRef = useRef<HTMLDivElement>(null)
+    const retweetButtonRef = useRef<HTMLDivElement>(null)
     const [openRetweetMenuopen, setOpenRetweetMenuOpen] = useState<string | undefined>("")
-    const [postState, setPostState] = useState<PostStateProps>({
-        liked: post?.liked || false,
-        likeNum: post?.likes || 0,
-        retweeted: post?.retweeted || false,
-        retweetNum: post?.retweets || 0,
-        bookmarked: false,
+    const { postStates, updatePostState } = usePostContext()
 
-    });
 
     useEffect(() => {
-        setPostState({
-            liked: post?.liked || false,
-            likeNum: post?.likes || 0,
-            retweeted: post?.retweeted || false,
-            retweetNum: post?.retweets || 0,
-            bookmarked: false,
-        })
-    }, [])
+
+        if (post?._id && !postStates[post?._id]) {
+            updatePostState(post?._id, { 
+                liked: post?.liked || false, 
+                likeNum: post?.likes || 0, 
+                retweeted: post?.retweeted || false, 
+                retweetNum: post?.retweets || 0, 
+                bookmarked: false })
+        }
+    }, [post, postStates, updatePostState])
+
+    let postState = postStates[post?._id! ] || { 
+        liked: false, 
+        likeNum: 0, 
+        retweeted:false, 
+        retweetNum:  0, 
+        bookmarked: false 
+    }
 
     const handleClickOutside = (event: MouseEvent) => {
         if (
-            menuRef.current &&
-            !menuRef.current.contains(event.target as Node) &&
-            buttonRef.current &&
-            !buttonRef.current.contains(event.target as Node)
+            retweetMenuRef.current &&
+            !retweetMenuRef.current.contains(event.target as Node) &&
+            retweetButtonRef.current &&
+            !retweetButtonRef.current.contains(event.target as Node)
         ) {
             setOpenRetweetMenuOpen("");
         }
@@ -77,27 +83,34 @@ const PostActionBtns = ({ singlePost, post, onLike }: PostActionBtnsProps) => {
     const handleLike = async (e: React.MouseEvent<HTMLDivElement>) => {
         e.preventDefault();
         e.stopPropagation();
-        console.log(postState.liked)
+
         if (!postState?.liked) {
 
-            setPostState((prev) => ({ ...prev, liked: true, likeNum: prev.likeNum + 1 }))
-
+            //setPostState((prev) => ({ ...prev, liked: true, likeNum: prev.likeNum + 1 }))
+             updatePostState(post?._id!, { liked: true, likeNum: postState.likeNum + 1 })
             const response = await axios.post(`/api/posts/${post?._id}/like`, { userId: userInfo?._id });
-
+            if (onLike) {
+                onLike()
+            }
             if (!response.data.success) {
-                setPostState((prev) => ({ ...prev, liked: false, likeNum: prev.likeNum - 1 }))
+               // setPostState((prev) => ({ ...prev, liked: false, likeNum: prev.likeNum - 1 }))
+                updatePostState(post?._id!, { liked: false, likeNum: postState.likeNum - 1 })
 
             }
 
 
         } else {
 
-            setPostState((prev) => ({ ...prev, liked: false, likeNum: prev.likeNum - 1 }))
+            //setPostState((prev) => ({ ...prev, liked: false, likeNum: prev.likeNum - 1 }))
+            updatePostState(post?._id!, { liked: false, likeNum: postState.likeNum - 1 })
 
             const response = await axios.post(`/api/posts/${post?._id}/unlike`, { userId: userInfo?._id });
-
+            if (onLike) {
+                onLike()
+            }
             if (!response.data.success) {
-                setPostState((prev) => ({ ...prev, liked: true, likeNum: prev.likeNum + 1 }))
+                //setPostState((prev) => ({ ...prev, liked: true, likeNum: prev.likeNum + 1 }))
+                updatePostState(post?._id!, { liked: true, likeNum: postState.likeNum + 1 })
             }
 
         }
@@ -108,14 +121,14 @@ const PostActionBtns = ({ singlePost, post, onLike }: PostActionBtnsProps) => {
         e.stopPropagation();
         let response: { data: { success: boolean } } | undefined;
         if (!postState.retweeted) {
-            setPostState((prev) => ({ ...prev, retweeted: true, retweetNum: prev.retweetNum + 1 }))
+            //setPostState((prev) => ({ ...prev, retweeted: true, retweetNum: prev.retweetNum + 1 }))
+            updatePostState(post?._id!, { retweeted: true, retweetNum: postState.retweetNum + 1 })
             setOpenRetweetMenuOpen("");
             response = await axios.post(`/api/posts/retweet`, { userId: userInfo?._id, postId: post?._id });
 
             if (response && response.data.success === false) {
-
-                setPostState((prev) => ({ ...prev, retweeted: false, retweetNum: prev.retweetNum - 1 }))
-
+                //setPostState((prev) => ({ ...prev, retweeted: false, retweetNum: prev.retweetNum - 1 }))
+                updatePostState(post?._id!, { retweeted: false, retweetNum: postState.retweetNum - 1 })
             }
 
         }
@@ -125,10 +138,13 @@ const PostActionBtns = ({ singlePost, post, onLike }: PostActionBtnsProps) => {
         if (postState.retweeted) {
             const undoRetweet = axios.put(`/api/posts/retweet`, { userId: userInfo?._id, postId: post?._id })
             console.log(undoRetweet)
-            setPostState((prev) => ({ ...prev, retweeted: false, retweetNum: prev.retweetNum - 1 }))
+            //setPostState((prev) => ({ ...prev, retweeted: false, retweetNum: prev.retweetNum - 1 }))
+            updatePostState(post?._id!, { retweeted: false, retweetNum: postState.retweetNum - 1 })
             setOpenRetweetMenuOpen("");
         } else {
-            setPostState((prev) => ({ ...prev, retweeted: true, retweetNum: prev.retweetNum + 1 }))
+            //setPostState((prev) => ({ ...prev, retweeted: true, retweetNum: prev.retweetNum + 1 }))
+            updatePostState(post?._id!, { retweeted: true, retweetNum: postState.retweetNum + 1 })
+
         }
     }
     const handleRetweetMenuToggle = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -142,16 +158,18 @@ const PostActionBtns = ({ singlePost, post, onLike }: PostActionBtnsProps) => {
         e.preventDefault();
         e.stopPropagation();
         if (!postState.bookmarked) {
-            setPostState((prev) => ({ ...prev, bookmarked: true }))
+            //setPostState((prev) => ({ ...prev, bookmarked: true }))
+            updatePostState(post?._id!, { bookmarked: true })
 
         } else {
-            setPostState((prev) => ({ ...prev, bookmarked: false }))
+           // setPostState((prev) => ({ ...prev, bookmarked: false }))
+            updatePostState(post?._id!, { bookmarked: false })
 
         }
     }
     return (
         <div className={`relative flex items-center cursor-default   justify-between  ${!singlePost && "border-t border-b border-twitterBorder mt-3 p-2 "}`} onClick={(e) => { e.preventDefault(); e.stopPropagation() }}>
-            {openRetweetMenuopen === post?._id && <RetweetMenu handleUndoneRetweet={handleUndoneRetweet} postState={postState} menuRef={menuRef} onclick={handleRetweet} />}
+            {openRetweetMenuopen === post?._id && <RetweetMenu handleUndoneRetweet={handleUndoneRetweet} postState={postState} retweetMenuRef={retweetMenuRef} onclick={handleRetweet} />}
 
             <div className="text-md group text-[#71767b] cursor-pointer font-medium flex items-center gap-[.3px]">
                 <div className="p-2 rounded-full transition-all duration-[200ms] flex justify-center items-center group-hover:bg-twitterBlue group-hover:bg-opacity-10">
@@ -160,13 +178,13 @@ const PostActionBtns = ({ singlePost, post, onLike }: PostActionBtnsProps) => {
                 <p className="text-sm -ml-[4px] transition-all duration-[200ms] group-hover:text-twitterBlue">34</p>
             </div>
 
-            <div onClick={handleRetweetMenuToggle} ref={buttonRef} className=' text-md z-20   text-[#71767b] cursor-pointer group font-medium flex items-center gap-[.3px]'>
+            <div onClick={handleRetweetMenuToggle} ref={retweetButtonRef} className=' text-md z-20   text-[#71767b] cursor-pointer group font-medium flex items-center gap-[.3px]'>
                 <div className='p-2 rounded-full transition-all duration-[200ms] flex justify-center items-center group-hover:bg-green-400  group-hover:bg-opacity-10'>
 
                     <AiOutlineRetweet className={`${postState.retweeted && 'text-green-400'} w-5 h-5 transition-all duration-[200ms] group-hover:text-green-400`} />
                 </div>
-                <div  className={`${postState.retweeted && 'text-green-400'} text-sm -ml-[4px] transition-all duration-[200ms] group-hover:text-green-400`}><FlipNumbers height={12} width={12} color={`
-                    ${postState.retweeted && "text-green-4"} `}  play perspective={100} numbers={postState?.retweetNum.toString()} /></div>
+                <div className={`${postState.retweeted && 'text-green-400'} text-sm -ml-[4px] transition-all duration-[200ms] group-hover:text-green-400`}><FlipNumbers height={12} width={12} color={`
+                    ${postState.retweeted && "text-green-4"} `} play perspective={100} numbers={postState?.retweetNum.toString()} /></div>
             </div>
             <div onClick={handleLike}
                 className=' text-md     text-[#71767b] cursor-pointer group font-medium flex items-center gap-[.3px]'>
@@ -175,7 +193,7 @@ const PostActionBtns = ({ singlePost, post, onLike }: PostActionBtnsProps) => {
                     <IoMdHeart className={`${postState?.liked ? 'text-pink-600 fill-pink-600 stroke-[21px] stroke-pink-600' : "fill-transparent stroke-[21px] stroke-[#71767b] "} w-5 transition-all duration-[200ms]  h-5 group-hover:text-pink-600 group-hover:stroke-pink-600`} />
                 </div>
                 <div className={`${(postState?.liked === true) && 'text-pink-600'} text-[#71767b] text-sm -ml-[4px] transition-all duration-[200ms]  group-hover:text-pink-600`}><FlipNumbers height={12} width={12} color={`
-                    ${postState.retweeted && "text-pink-600"} `}  play perspective={100} numbers={postState?.likeNum.toString()} /></div>
+                    ${postState.retweeted && "text-pink-600"} `} play perspective={100} numbers={postState?.likeNum.toString()} /></div>
 
             </div>
 

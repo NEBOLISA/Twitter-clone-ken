@@ -17,6 +17,10 @@ export async function GET(request: Request) {
          const userId = session.user.id
        
         const RetweetExists = await Retweet.find({userId}).populate('post').sort({ createdAt: -1 }).exec()
+        const Posts = await Post.find();
+        Posts.map((post)=>{
+            
+        })
            if(RetweetExists){
             return NextResponse.json({ postRetweeted:RetweetExists}, { status: 200 })
            }else{

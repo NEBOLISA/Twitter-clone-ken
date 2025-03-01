@@ -3,9 +3,10 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import SessionProviderWrapper from "./components/sessionProviderWrapper";
-import useUserInfo from "./hooks/useUserInfo";
-import LayoutDiv from "./components/layoutDiv";
-import { AppProvider } from "./contexts/AppContext";
+
+import { AppProvider} from "./contexts/AppContext";
+import { PostProvider } from "./contexts/PostContext";
+
 
 
 const geistSans = Geist({
@@ -25,10 +26,10 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
- 
+
 }: Readonly<{
   children: React.ReactNode;
- 
+
 }>) {
 
   return (
@@ -36,34 +37,32 @@ export default function RootLayout({
       <body
         className={`  ${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-          <SessionProviderWrapper> 
-           
-           <AppProvider>
+        <SessionProviderWrapper>
 
-          <div className=" ">
-            {/* Left Sidebar */}
-            {/* <div className="w-[28%]  ">
-              
-              <p>left</p>
-            </div> */}
-             
-            {/* Main Content */}
+          <AppProvider>
+            <PostProvider>
 
-              {children}
+        
+
             
+              <div className=" ">
 
-            {/* Right Sidebar */}
-            {/* <div className="w-[28%] hidden md:block  ">
-             
-            </div> */}
-          </div>
-         
-           </AppProvider>
 
-           
-          </SessionProviderWrapper> 
-      
-       
+
+                {children}
+
+
+
+              </div>
+          
+              </PostProvider>
+
+          </AppProvider>
+
+
+        </SessionProviderWrapper>
+
+
       </body>
     </html>
   );
