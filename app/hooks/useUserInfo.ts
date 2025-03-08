@@ -1,3 +1,4 @@
+"use client"
 import { useSession } from 'next-auth/react'
 import React, { useEffect, useState } from 'react'
 export interface UserInfo {
@@ -14,7 +15,8 @@ export interface UserInfo {
    
     const { data: session, status } = useSession()
     const [userInfo, setUserInfo] = useState<UserInfo | null >()
-    const [userInfoStatus, setUserInfoStatus] = useState<"loading" | "done" | "unauthenticated">("loading")
+    const [userInfoStatus, setUserInfoStatus] = useState<"loading" | "done" | "unauthenticated">(
+        session ? "loading" : "unauthenticated")
     const getUserInfo = async () => {
         //@ts-ignore
           if(!session?.user?.id){

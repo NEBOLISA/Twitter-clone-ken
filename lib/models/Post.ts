@@ -5,6 +5,8 @@ const PostSchema = new Schema({
     likes:Number,
     retweets:Number,
     post:String,
+    commentsCount:{type:Number,default:0},
+    parent:{type:mongoose.Types.ObjectId, ref:"Post"}
     
 },{timestamps:true})
 

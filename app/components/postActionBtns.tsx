@@ -8,13 +8,14 @@ import { IoBookmarkSharp } from "react-icons/io5";
 import { FiShare } from "react-icons/fi";
 import { BiBarChart } from "react-icons/bi";
 import axios from 'axios';
-import { postsType } from '../page';
+
 import useUserInfo from '../hooks/useUserInfo';
 import RetweetMenu from './retweetMenu';
 
 import { useAppContext } from '../contexts/AppContext';
 import FlipNumbers from 'react-flip-numbers';
 import { usePostContext } from '../contexts/PostContext';
+import { postsType } from '../(auth)/page';
 interface PostActionBtnsProps {
     singlePost?: boolean
     post: postsType | undefined
@@ -28,6 +29,7 @@ export interface PostStateProps {
     retweeted: boolean,
     retweetNum: number,
     bookmarked: boolean,
+    commentsCount:number
 
 
 }
@@ -40,26 +42,40 @@ const PostActionBtns = ({ post, onLike, singlePost }: PostActionBtnsProps) => {
     const { postStates, updatePostState } = usePostContext()
 
 
-    useEffect(() => {
-
-        if (post?._id && !postStates[post?._id]) {
-            updatePostState(post?._id, { 
-                liked: post?.liked || false, 
-                likeNum: post?.likes || 0, 
-                retweeted: post?.retweeted || false, 
-                retweetNum: post?.retweets || 0, 
-                bookmarked: false })
-        }
-    }, [post, postStates, updatePostState])
-
     let postState = postStates[post?._id! ] || { 
         liked: false, 
         likeNum: 0, 
         retweeted:false, 
         retweetNum:  0, 
-        bookmarked: false 
+        bookmarked: false, 
+        commentsCount:0
     }
-
+    // useEffect(() => {
+    //    if (post?._id ) {
+    //     // if (post?._id && !postStates[post?._id]) {
+    //         updatePostState(post?._id, { 
+    //             liked: post?.liked || false, 
+    //             likeNum: post?.likes || 0, 
+    //             retweeted: post?.retweeted || false, 
+    //             retweetNum: post?.retweets || 0, 
+    //             commentsCount:post?.commentsCount || 0,
+    //             bookmarked: false })
+    //     }
+    // }, [post, postStates, updatePostState])
+    useEffect(() => {
+        if (post?._id) {
+            updatePostState(post?._id, {
+                liked: post?.liked || false,
+                likeNum: post?.likes || 0,
+                retweeted: post?.retweeted || false,
+                retweetNum: post?.retweets || 0,
+                commentsCount: post?.commentsCount || 0, 
+                bookmarked: false
+            });
+        }
+    }, [post]);
+   
+   
     const handleClickOutside = (event: MouseEvent) => {
         if (
             retweetMenuRef.current &&
@@ -167,15 +183,16 @@ const PostActionBtns = ({ post, onLike, singlePost }: PostActionBtnsProps) => {
 
         }
     }
+  
     return (
         <div className={`relative flex items-center cursor-default   justify-between  ${!singlePost && "border-t border-b border-twitterBorder mt-3 p-2 "}`} onClick={(e) => { e.preventDefault(); e.stopPropagation() }}>
             {openRetweetMenuopen === post?._id && <RetweetMenu handleUndoneRetweet={handleUndoneRetweet} postState={postState} retweetMenuRef={retweetMenuRef} onclick={handleRetweet} />}
 
-            <div className="text-md group text-[#71767b] cursor-pointer font-medium flex items-center gap-[.3px]">
+            <div  className="text-md group text-[#71767b] cursor-pointer font-medium flex items-center gap-[.3px]">
                 <div className="p-2 rounded-full transition-all duration-[200ms] flex justify-center items-center group-hover:bg-twitterBlue group-hover:bg-opacity-10">
                     <BsChat className="w-5 h-5 text-inherit transition-all duration-[200ms] group-hover:text-twitterBlue" />
                 </div>
-                <p className="text-sm -ml-[4px] transition-all duration-[200ms] group-hover:text-twitterBlue">34</p>
+                <p className="text-sm -ml-[4px] transition-all duration-[200ms] group-hover:text-twitterBlue">{postState?.commentsCount}</p>
             </div>
 
             <div onClick={handleRetweetMenuToggle} ref={retweetButtonRef} className=' text-md z-20   text-[#71767b] cursor-pointer group font-medium flex items-center gap-[.3px]'>
@@ -204,7 +221,7 @@ const PostActionBtns = ({ post, onLike, singlePost }: PostActionBtnsProps) => {
                         <div className="p-2 rounded-full transition-all duration-[200ms] flex justify-center items-center group-hover:bg-twitterBlue group-hover:bg-opacity-10">
                             <BiBarChart className="w-5 h-5 text-inherit transition-all duration-[200ms] group-hover:text-twitterBlue" />
                         </div>
-                        <p className="text-sm -ml-[4px] transition-all duration-[200ms] group-hover:text-twitterBlue">34</p>
+                        <p className="text-sm -ml-[4px] transition-all duration-[200ms] group-hover:text-twitterBlue">{postState?.commentsCount}</p>
                     </div>
                     <div className='flex items-center justify-between'>
                         <div onClick={handleBookmark} className=' text-md    text-[#71767b] cursor-pointer group font-medium flex items-center'>

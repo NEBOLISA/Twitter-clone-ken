@@ -1,5 +1,5 @@
 "use client"
-import React, { createContext, useContext, useRef, useState } from "react";
+import React, { createContext, useContext, useMemo, useRef, useState } from "react";
 import { EmojiClickData } from "emoji-picker-react";
 import Post from "@/lib/models/Post";
 interface PostStateProps {
@@ -8,6 +8,7 @@ interface PostStateProps {
     retweeted: boolean;
     retweetNum: number;
     bookmarked: boolean;
+    commentsCount:number
   }
 type PostContextType = {
 
@@ -37,11 +38,14 @@ export const PostProvider: React.FC<{ children: React.ReactNode }> = ({ children
             ...prev,
             [postId]:{
                 ...prev[postId],
-                ...newState}}))
+                ...newState}
+            }))
     }
-    
+    const postContextValues:PostContextType = useMemo(()=> ({
+        replyEmojiBoxOpen,postStates,updatePostState, setReplyEmojiBoxOpen, replyText, chosenEmoji, emojiBoxOpen, setEmojiBoxOpen, setChosenEmoji, setReplyText
+    }),[replyEmojiBoxOpen,postStates,replyText,chosenEmoji,emojiBoxOpen])
     return (
-        <PostContext.Provider value={{replyEmojiBoxOpen,postStates,updatePostState, setReplyEmojiBoxOpen, replyText, chosenEmoji, emojiBoxOpen, setEmojiBoxOpen, setChosenEmoji, setReplyText }}>
+        <PostContext.Provider value={postContextValues }>
             {children}
         </PostContext.Provider>
     );

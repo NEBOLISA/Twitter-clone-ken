@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { getProviders, ClientSafeProvider, useSession } from 'next-auth/react';
-import SignInButton from '../components/button';
+import SignInButton from '../../components/button';
 import { useRouter } from 'next/navigation';
 
 const LoginPage = () => {

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Image from "next/image";
 import { RiTwitterXFill } from "react-icons/ri";
 
@@ -14,7 +14,8 @@ import {
   AccountCircle as ProfileIcon,
   MoreHoriz as MoreIcon,
 } from "@mui/icons-material";
-import useUserInfo from '../hooks/useUserInfo';
+import useUserInfo, { UserInfo } from '../hooks/useUserInfo';
+import { useSession } from 'next-auth/react';
 const menuItems = [
   {text:"",icon:<RiTwitterXFill className='w-8 h-8' /> },
     { text: "Home", icon: <HomeIcon sx={{ fontSize: 29 }} className='text-white ' /> },
@@ -29,10 +30,12 @@ const menuItems = [
     { text: "More", icon: <MoreIcon sx={{ fontSize: 29 }} className='text-white'/> },
  
   ];
-const Sidebar = () => {
-  const { userInfo } = useUserInfo()
+const Sidebar = ({userInfo}:{userInfo:UserInfo}) => {
+    // const { data: session, status } = useSession()
+  
+   
   return (
-   <div className='pt-4 flex flex-col w-full items-end space-y-2.5'>
+   <div className='pt-4 flex flex-col w-full items-end space-y-2.5 min-h-screen max-h-screen overflow-y-auto '>
     
     <ul  className='flex flex-col w-2/3 h-full '>
       {menuItems.map((item, index) => (

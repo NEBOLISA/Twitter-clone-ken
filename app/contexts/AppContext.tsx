@@ -1,8 +1,9 @@
 "use client"
 import React, { createContext, useContext, useRef, useState } from "react";
-import { postsType } from "../page";
+
 import  { EmojiClickData } from "emoji-picker-react";
 import { PostStateProps } from "../components/postActionBtns";
+import { postsType } from "../(auth)/page";
 type AppContextType = {
   menuRef: React.RefObject<HTMLDivElement | null>;
   buttonRef: React.RefObject<HTMLDivElement | null>;
@@ -42,6 +43,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           retweeted:  false,
           retweetNum:  0,
           bookmarked: false,
+          commentsCount:0
   
       });
   const emojiRef = useRef(null)

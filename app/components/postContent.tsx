@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { postsType } from '../page'
+
 import { HiDotsHorizontal } from "react-icons/hi";
 
 import ReactTimeAgo from 'react-time-ago';
@@ -9,6 +9,7 @@ import { format } from 'date-fns';
 import PostActionBtns from './postActionBtns';
 import TweetActionsMenu from './tweetActionsMenu';
 import { useAppContext } from '../contexts/AppContext';
+import { postsType } from '../(auth)/page';
 
 
 
@@ -40,12 +41,16 @@ const PostContent = ({ post, onLike, openOptionMenu, setOpenOptionMenu, isOption
 
     const timeFormatted = format(date, "hh:mm a");
     const dateFormatted = format(date, "MMM d, yyyy");
+
+
     const handleImageClick = (e: React.MouseEvent<HTMLImageElement>) => {
         e.preventDefault();
         e.stopPropagation();
-        router.push(`/profile/${post?.author?.userName}`)
+        router.push(`/${post?.author?.userName}`)
 
     }
+
+
     const handleClickOutside = (event: MouseEvent) => {
         if (
             menuRef.current &&
@@ -58,7 +63,9 @@ const PostContent = ({ post, onLike, openOptionMenu, setOpenOptionMenu, isOption
             } else { setOpenOptionMenu!("") }
         }
     };
-
+     const NavigateToDetails=()=>{
+        router.push(`/${post?.author?.userName}/status/${post?._id}`)
+     }
 
     useEffect(() => {
         document.addEventListener("mousedown", handleClickOutside);
@@ -74,7 +81,7 @@ const PostContent = ({ post, onLike, openOptionMenu, setOpenOptionMenu, isOption
             setIsViewPostOptionsOpen!(true)
         } else {
             setOpenOptionMenu!(post?._id!)
-           
+
         }
 
 
@@ -83,22 +90,26 @@ const PostContent = ({ post, onLike, openOptionMenu, setOpenOptionMenu, isOption
 
     return (
         <>
-            {!postDetail && <Link href={`/${post?.author?.userName}/status/${post?._id}`} className='flex gap-2 '>
+            {!postDetail && <Link href={`/${post?.author?.userName}/status/${post?._id}`}  className=' cursor-pointer flex gap-2 relative '>
                 {openOptionMenu == post?._id && <TweetActionsMenu menuRef={menuRef} />}
-                <div onClick={handleImageClick} className='z-40' >
+                {/* <Link href={`/${post?.author?.userName}`}  className='z-40' ></Link> */}
                     <div className='rounded-full w-10 overflow-hidden' >
 
                         <img src={post?.author?.image} alt="" width="100" height="100" />
                     </div>
-                </div>
+                
                 <div className='grow'>
                     <div className='flex  justify-between'>
                         <div className='flex items-center gap-1 '>
+                            {/* <Link href={`/${post?.author?.userName}`}>   </Link> */}
+                                <div  className='font-bold '>{post?.author?.name}</div>
+                         
 
-                            <div className='font-bold '>{post?.author?.name}</div>
                             <div className={`flex items-center gap-1 `}>
-
-                                <h3 className='text-md text-[#71767b] font-medium'>{`@${post?.author?.userName} `}</h3>
+                                {/* <Link href={`/${post?.author?.userName}`}>   </Link> */}
+                                    <h3  className='text-md text-[#71767b] 
+                                font-medium'>{`@${post?.author?.userName} `}</h3>
+                             
 
                                 <div className='flex gap-1  items-center '>
                                     <div className=' text-md text-[#71767b] font-medium'>.</div>
@@ -131,12 +142,14 @@ const PostContent = ({ post, onLike, openOptionMenu, setOpenOptionMenu, isOption
                         </div>
                         <div className='grow'>
                             <div className='flex  justify-between'>
-                                <div>
+                            <Link href={`/${post?.author?.userName}`}>
+                                <div className='cursor-pointer' onClick={handleImageClick}>
                                     <div className='font-bold '>{post?.author?.name}</div>
 
 
                                     <h3 className='text-md -mt-1 text-[#71767b] font-medium'>{`@${post?.author?.userName} `}</h3>
                                 </div>
+                                </Link>
                                 <div onClick={handleOptionsClick} ref={buttonRef} className='group   w-8 h-8 rounded-full  flex justify-center items-center  '>
                                     <button className='flex   items-center justify-center group-hover:bg-[#1c233780] group-hover:w-8 group-hover:h-8  rounded-full'>
 

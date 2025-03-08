@@ -125,8 +125,9 @@ const handleOnChange =(e:React.ChangeEvent<HTMLTextAreaElement>)=>{
           <div className=' flex justify-between text-right   pt-2'>
             <MediaComponent isMainPage/>
             <button disabled={!post.length} className={` ${post.length > 0 ? "bg-twitterBlue text-white" : "cursor-default  bg-[#707070]"} mb-2 text-black px-5 py-[0.4rem] rounded-full font-bold`}>{isLoading ? "Loading..." : "Post"}</button>
-            {isSuccessMessage && <p className='text-green-400 font-semibold text-center'>{postStatusMsg}</p>}
+            
           </div>
+          {isSuccessMessage && <p className='text-green-400 font-semibold text-center'>{postStatusMsg}</p>}
         </div>
       </div>
     </form>

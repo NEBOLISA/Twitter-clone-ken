@@ -1,19 +1,20 @@
 'use client'
 
 import { useEffect, useState } from "react";
-import UserNameForm from "./components/userNameForm";
-import useUserInfo from "./hooks/useUserInfo";
-import PostTweet from "./components/postTweet";
+import UserNameForm from "../components/userNameForm";
+import useUserInfo from "../hooks/useUserInfo";
+import PostTweet from "../components/postTweet";
 import axios from "axios";
-import PostContent from "./components/postContent";
+import PostContent from "../components/postContent";
 import en from 'javascript-time-ago/locale/en'
 
 import TimeAgo from 'javascript-time-ago'
 
-import { useAppContext } from "./contexts/AppContext";
+import { useAppContext } from "../contexts/AppContext";
 import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import Layout from "./components/layout";
+import Layout from "../components/layout";
+import LoadingPage from "../(public)/loadingPage";
 
 
 TimeAgo.addLocale(en)
@@ -32,6 +33,7 @@ export interface postsType {
     liked?: boolean
     retweets: number
     retweeted?: boolean,
+    commentsCount:number
 
 }
 interface RetweetType {
@@ -79,24 +81,21 @@ export default function Home() {
         }
     }, [userInfoStatus, router]);
 
-    if (userInfoStatus === "loading") {
+    if (posts.length === 0 &&  userInfoStatus === "loading") {
 
-
-        return <div className="w-screen h-screen flex justify-center items-center">
-            <div className="p-4 rounded-lg bg-[#0f0f0f]">
-                <span className="block text-white">Loading...</span>
-                Please wait while we retrieve all the information..
-            </div>
-        </div>
+       
+        return <LoadingPage/>
     }
     if (userInfo && !userInfo?.userName) {
 
         return <UserNameForm />
     }
 
-
+    if (userInfoStatus === undefined) {
+        return null; 
+      }
     return (
-        <Layout>
+        <>
 
 
             <div className=" min-h-screen max-h-screen overflow-y-auto relative ">
@@ -122,6 +121,6 @@ export default function Home() {
                
                 <div onClick={handleLogOut} className="px-3  absolute bottom-2  left-[50%] -translate-x-[50%] py-1 w-max rounded-full bg-white"><button className="text-black font-semibold">Logout</button></div>
             </div>
-        </Layout>
+        </>
     );
 }

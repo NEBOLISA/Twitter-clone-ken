@@ -22,7 +22,7 @@ const   EmojiPicker = ({emojiRef, replyEmojiRef,isMainPage,isReplyPage}:{emojiRe
     
   return (
 
-    <div ref={isMainPage?emojiRef:replyEmojiRef}>
+    <div ref={isMainPage?emojiRef:replyEmojiRef} className='z-30'>
      <Picker className='picker' style={{backgroundColor:"black"}}   onEmojiClick={onEmojiClick} />
     </div>
                     
