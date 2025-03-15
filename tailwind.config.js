@@ -12,7 +12,7 @@ module.exports = {
     extend: {
       colors:{
         twitterWhite: '#e7e9ea',
-        twitterBlue: '#308cd8',
+        twitterBlue: '#1d9bf0',
         twitterBorder: '#2f3336',
         twiterLightGray:"#71767b",
         twitterDarkGray:"#17181c"

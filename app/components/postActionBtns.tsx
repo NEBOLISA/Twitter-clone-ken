@@ -16,6 +16,9 @@ import { useAppContext } from '../contexts/AppContext';
 import FlipNumbers from 'react-flip-numbers';
 import { usePostContext } from '../contexts/PostContext';
 import { postsType } from '../(auth)/page';
+import Link from 'next/link';
+import Router from 'next/router';
+import { useRouter } from 'next/navigation';
 interface PostActionBtnsProps {
     singlePost?: boolean
     post: postsType | undefined
@@ -35,12 +38,13 @@ export interface PostStateProps {
 }
 
 const PostActionBtns = ({ post, onLike, singlePost }: PostActionBtnsProps) => {
+    
     const { userInfo } = useUserInfo()
     const retweetMenuRef = useRef<HTMLDivElement>(null)
     const retweetButtonRef = useRef<HTMLDivElement>(null)
     const [openRetweetMenuopen, setOpenRetweetMenuOpen] = useState<string | undefined>("")
-    const { postStates, updatePostState } = usePostContext()
-
+    const { postStates, updatePostState, setPostToReply } = usePostContext()
+ const router = useRouter()
 
     let postState = postStates[post?._id! ] || { 
         liked: false, 
@@ -73,6 +77,9 @@ const PostActionBtns = ({ post, onLike, singlePost }: PostActionBtnsProps) => {
                 bookmarked: false
             });
         }
+        
+          
+        
     }, [post]);
    
    
@@ -183,12 +190,18 @@ const PostActionBtns = ({ post, onLike, singlePost }: PostActionBtnsProps) => {
 
         }
     }
-  
+    const handleComposePost=()=>{
+        router.push("/compose/post")
+        localStorage.setItem("post",JSON.stringify(post ))
+      
+       setPostToReply(post!);
+    // }
+    }
     return (
         <div className={`relative flex items-center cursor-default   justify-between  ${!singlePost && "border-t border-b border-twitterBorder mt-3 p-2 "}`} onClick={(e) => { e.preventDefault(); e.stopPropagation() }}>
             {openRetweetMenuopen === post?._id && <RetweetMenu handleUndoneRetweet={handleUndoneRetweet} postState={postState} retweetMenuRef={retweetMenuRef} onclick={handleRetweet} />}
 
-            <div  className="text-md group text-[#71767b] cursor-pointer font-medium flex items-center gap-[.3px]">
+            <div onClick={()=>handleComposePost()}  className="text-md group text-[#71767b] cursor-pointer font-medium flex items-center gap-[.3px]">
                 <div className="p-2 rounded-full transition-all duration-[200ms] flex justify-center items-center group-hover:bg-twitterBlue group-hover:bg-opacity-10">
                     <BsChat className="w-5 h-5 text-inherit transition-all duration-[200ms] group-hover:text-twitterBlue" />
                 </div>

@@ -4,11 +4,12 @@ import React from 'react'
 import { ReactNode } from 'react';
 import Sidebar from '../components/sidebar';
 import useUserInfo from '../hooks/useUserInfo';
-
-const AuthLayout = ({ children }: { children: ReactNode }) => {
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+const AuthLayout = ({ children,modal }: { children: ReactNode,  modal:React.ReactNode }) => {
     const { userInfo,userInfoStatus } = useUserInfo()
     return (
-        <div className=' flex min-h-screen w-screen  '>
+        <div className=' flex min-h-screen w-screen overflow-hidden '>
 
 
           { 
@@ -21,7 +22,10 @@ const AuthLayout = ({ children }: { children: ReactNode }) => {
                <Sidebar userInfo={userInfo!}/>
             </div>
             <main className="flex-1 w-[46%]">
+            <ToastContainer />
                 {children}
+                {modal}
+               
             </main>
             <div className="w-[28%] hidden md:block   border  border-r border-twitterBorder  ">
 

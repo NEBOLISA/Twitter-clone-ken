@@ -99,7 +99,7 @@ const handleOnChange =(e:React.ChangeEvent<HTMLTextAreaElement>)=>{
         <div className=''>
           <div className='rounded-full w-10 overflow-hidden '>
 
-            <img src={user?.image} alt="profile_img" />
+          { user &&  <img src={user?.image} alt="profile_img" />}
           </div>
         </div>
         <div className='grow pl-2 '>

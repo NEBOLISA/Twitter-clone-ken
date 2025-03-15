@@ -1,6 +1,7 @@
 "use client"
 import { postsType } from '@/app/(auth)/page';
-import Layout from '@/app/components/layout';
+import BackArrowNav from '@/app/components/backArrowNav';
+
 import PostContent from '@/app/components/postContent';
 import TweetActionsMenu from '@/app/components/tweetActionsMenu';
 import TweetReply from '@/app/components/tweetReply';
@@ -12,7 +13,7 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
-import { IoArrowBackOutline } from "react-icons/io5";
+
 
 
 
@@ -30,6 +31,7 @@ const PostDetail = () => {
   const [openOptionMenu, setOpenOptionMenu] = useState("")
 
   const getSinglePost = async () => {
+
      if(userInfo) {
       const response = await axios.get(`/api/posts?id=${id}`,{ params: { userId: userInfo?._id } })
     // const updatedPost = posts.find((pst: any) => pst?._id === response?.data?.post?._id)
@@ -78,13 +80,8 @@ const PostDetail = () => {
   return (
     <>
       <div className=' min-h-screen max-h-screen overflow-y-auto '>
-        <div className='flex items-center gap-8 mb-5 p-3'>
-
-          <div onClick={moveBack}>
-            <IoArrowBackOutline className='w-5 h-5 cursor-pointer' />
-          </div>
-          <h3 className='text-xl font-extrabold'>Post</h3>
-        </div>
+       
+       <BackArrowNav moveBack={moveBack} title='Post'/>
 
         {post ? <div className='relative p-3'>
           {isViewPostOptionsOpen && <TweetActionsMenu menuRef={menuRef} />}

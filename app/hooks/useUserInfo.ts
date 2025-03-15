@@ -7,6 +7,7 @@ export interface UserInfo {
     name: string,
     userName?: string
     image:string
+    cover:string
 
 }  
 
@@ -39,6 +40,7 @@ export interface UserInfo {
 
     }
     useEffect(() => {
+        console.log({session})
         getUserInfo()
 
     }, [status])

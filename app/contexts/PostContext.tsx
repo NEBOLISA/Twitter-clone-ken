@@ -2,6 +2,7 @@
 import React, { createContext, useContext, useMemo, useRef, useState } from "react";
 import { EmojiClickData } from "emoji-picker-react";
 import Post from "@/lib/models/Post";
+import { postsType } from "../(auth)/page";
 interface PostStateProps {
     liked: boolean;
     likeNum: number;
@@ -21,7 +22,9 @@ type PostContextType = {
     replyEmojiBoxOpen: boolean;
      setReplyEmojiBoxOpen: React.Dispatch<React.SetStateAction<boolean>>;
      postStates: {[key:string]:PostStateProps};
-        updatePostState:(postId:string, newState:Partial<PostStateProps>)=>void
+        updatePostState:(postId:string, newState:Partial<PostStateProps>)=>void;
+        postToReply: postsType;
+        setPostToReply:React.Dispatch<React.SetStateAction<postsType>>;
 };
 const PostContext = createContext<PostContextType | undefined>(undefined);
 
@@ -32,7 +35,7 @@ export const PostProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const [emojiBoxOpen, setEmojiBoxOpen] = useState(false)
     const [replyEmojiBoxOpen, setReplyEmojiBoxOpen] = useState(false)
     const [postStates, setPostStates] = useState<{[key:string]:PostStateProps}>({})
-
+    const [postToReply, setPostToReply] = useState<postsType>({} as postsType)
     const updatePostState = (postId:string, newState:Partial<PostStateProps>) => {
         setPostStates((prev)=>({
             ...prev,
@@ -42,7 +45,7 @@ export const PostProvider: React.FC<{ children: React.ReactNode }> = ({ children
             }))
     }
     const postContextValues:PostContextType = useMemo(()=> ({
-        replyEmojiBoxOpen,postStates,updatePostState, setReplyEmojiBoxOpen, replyText, chosenEmoji, emojiBoxOpen, setEmojiBoxOpen, setChosenEmoji, setReplyText
+        replyEmojiBoxOpen,postStates,updatePostState, setReplyEmojiBoxOpen,postToReply, setPostToReply, replyText, chosenEmoji, emojiBoxOpen, setEmojiBoxOpen, setChosenEmoji, setReplyText
     }),[replyEmojiBoxOpen,postStates,replyText,chosenEmoji,emojiBoxOpen])
     return (
         <PostContext.Provider value={postContextValues }>

@@ -13,7 +13,7 @@ import TimeAgo from 'javascript-time-ago'
 import { useAppContext } from "../contexts/AppContext";
 import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import Layout from "../components/layout";
+
 import LoadingPage from "../(public)/loadingPage";
 
 
@@ -47,14 +47,13 @@ export default function Home() {
     const { userInfo, userInfoStatus, setUserInfo, setUserInfoStatus } = useUserInfo()
     const [openOptionMenu, setOpenOptionMenu] = useState("")
     const router = useRouter()
-    const { data: session } = useSession()
+    // const { data: session } = useSession()
    
     useEffect(() => {
 
 
         getPosts()
     }, [userInfo])
-
 
     async function handleLogOut() {
         setUserInfo(null)
@@ -69,6 +68,8 @@ export default function Home() {
 
             return;
         }
+
+ 
         const { data: postsResponse } = await axios.get("/api/posts", { params: { userId: userInfo?._id } });
        
 
@@ -104,7 +105,7 @@ export default function Home() {
                 <h1 className="font-bold text-lg p-4">
                     Home
                 </h1>
-                {userInfo && <PostTweet user={userInfo} onPost={() => { getPosts() }} />}
+                 <PostTweet user={userInfo!} onPost={() => { getPosts() }} />
                 <div className="">
 
 

@@ -10,11 +10,12 @@ export async function GET(request: Request) {
   await initMongoose()
  const {searchParams} = new URL(request.url);
  const id = searchParams.get("id")
- if(!id){
+ const userName = searchParams.get("userName")
+//  if(!id){
  
-  return NextResponse.json({error:"id required"}, {status:400})
- }
-const user = await User?.findById( id )
+//   return NextResponse.json({error:"id required"}, {status:400})
+//  }
+const user = id ? await User?.findById(id):await User?.findOne({userName})
  return NextResponse.json({ user});
 }
 

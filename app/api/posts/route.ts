@@ -50,21 +50,19 @@ const getSinglePost = async (postId: string,userId:string |null) => {
 export async function GET(request: Request) {
     try {
         await initMongoose()
+        const session = await getServerSession(authOptions)
         const { searchParams } = new URL(request.url);
         const id = searchParams.get("id")
-        const userId = searchParams.get("userId");
+        const userId = session.user.id
         const postId = searchParams.get("postId");
+        const author = searchParams.get("author")
       
         if (!id) {
-            // if (userId) {
-            //    return await getReplies(userId)
-            // } else if (postId) {
-
-            //    return await getReplies(postId)
-
-            // }
+           
             const parent = postId || null;
-            const Posts = await Post.find({ parent }).populate('author').sort({ createdAt: -1 }).exec()
+            const searchItem = author? {author}:{parent}
+            const Posts = author? await Post.find( {...searchItem, parent: { $exists: false } }).populate('author').sort({ createdAt: -1 }).exec()
+            : await Post.find(searchItem).populate('author').sort({ createdAt: -1 }).exec()
             const userRetweets = await Retweet.find({ userId })
             const userLikes = await Like.find({ userId })
           
@@ -80,7 +78,7 @@ export async function GET(request: Request) {
            // return NextResponse.json({ message: "No post found" }, { status: 504 })
         }
         if (id) {
-
+          
            return await getSinglePost(id,userId)
         }
 
