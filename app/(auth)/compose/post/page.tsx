@@ -12,23 +12,27 @@ import { useEffect, useState } from "react";
 
 const ComposePostModal = () => {
   const router = useRouter();
- 
-  const [postToReply, setPostToReply] = useState<any>(null);
-  const [postDate, setPostDate] = useState<Date | null>(null);
+ const [postToReply, setPostToReply] = useState<any>(null);
+   const [postDate, setPostDate] = useState<Date | null>(null);
+   const { userInfo  } = useUserStore(); 
+   useEffect(() => {
+     const storedPost = localStorage.getItem("post");
+     if (storedPost) {
+       const parsedPost = JSON.parse(storedPost);
+       setPostToReply(parsedPost);
+       setPostDate(new Date(parsedPost.createdAt ?? Date.now()));
+     }
+   }, []);
 
-  useEffect(() => {
-    const storedPost = localStorage.getItem("post");
-    if (storedPost) {
-      const parsedPost = JSON.parse(storedPost);
-      setPostToReply(parsedPost);
-      setPostDate(new Date(parsedPost.createdAt ?? Date.now()));
-    }
-  }, []);
   // const postToReply = JSON.parse(localStorage.getItem("post")!)
   // const postDate = new Date(postToReply?.createdAt ?? Date.now());
   const now = new Date();
-  const timeDifference = (now.getTime() - postDate!.getTime()) / (1000 * 60 * 60);
-  const { userInfo  } = useUserStore(); 
+  let timeDifference;
+  if(postDate){
+     timeDifference = (now.getTime() - postDate!.getTime()) / (1000 * 60 * 60);
+  }
+ 
+  
   return (
     <div className="fixed w-full inset-0 bg-[#5b708366] z-40 flex justify-center items-center">
 
@@ -67,7 +71,7 @@ const ComposePostModal = () => {
 
                     <div className='flex gap-1  items-center '>
                       <div className=' text-md text-[#71767b] font-medium'>.</div>
-                      {postToReply?.createdAt && <p className='text-sm text-[#71767b] font-medium'>{timeDifference < 24 ? timeAgo(postDate!) : format(postDate!, "MMM d")}</p>}
+                      {postToReply?.createdAt && <p className='text-sm text-[#71767b] font-medium'>{timeDifference! < 24 ? timeAgo(postDate!) : format(postDate!, "MMM d")}</p>}
                     
                     </div>
                   </div>
