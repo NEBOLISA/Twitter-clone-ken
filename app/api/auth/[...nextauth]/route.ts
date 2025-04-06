@@ -1,11 +1,11 @@
 import client from "@/lib/db";
 import { MongoDBAdapter } from "@auth/mongodb-adapter";
 
-import NextAuth, { Session } from "next-auth";
+import NextAuth from "next-auth";
 import { JWT } from "next-auth/jwt";
 
 import GoogleProvider from "next-auth/providers/google";
-import { signIn } from "next-auth/react";
+
 
 
 export const authOptions = {
@@ -61,4 +61,5 @@ export const authOptions = {
 const handler = NextAuth( authOptions);
 
 
-export { handler as GET, handler as POST };
+export const GET = handler;
+export const POST = handler;
