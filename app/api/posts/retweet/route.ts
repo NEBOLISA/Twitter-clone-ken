@@ -5,7 +5,8 @@ import Post from "@/lib/models/Post";
 import Like from "@/lib/models/Like";
 import Retweet from "@/lib/models/Retweet";
 import { getServerSession } from "next-auth";
-import { authOptions } from "../../auth/[...nextauth]/route";
+import { authOptions } from "@/lib/auth";
+
 
 
 export async function GET(request: Request) {
