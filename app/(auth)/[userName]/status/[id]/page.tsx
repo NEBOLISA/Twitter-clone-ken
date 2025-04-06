@@ -6,15 +6,24 @@ import PostContent from '@/app/components/postContent';
 import TweetActionsMenu from '@/app/components/tweetActionsMenu';
 import TweetReply from '@/app/components/tweetReply';
 import { useAppContext } from '@/app/contexts/AppContext';
-import useUserInfo from '@/app/hooks/useUserInfo';
+
+// import useUserInfo from '@/app/hooks/useUserInfo';
+import { useUserStore } from '@/app/store/useUserStore';
+
 
 import axios from 'axios';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
-import React, { useEffect, useState } from 'react'
+import React, { CSSProperties, useEffect, useState } from 'react'
+import BeatLoader from 'react-spinners/BeatLoader';
+import { toast, ToastContainer } from 'react-toastify';
 
-
+const override: CSSProperties = {
+    display: "block",
+    margin: "0 auto",
+    borderColor: "red",
+};
 
 
 
@@ -22,13 +31,15 @@ const PostDetail = () => {
 
   const { id } = useParams()
   const [post, setPost] = useState<postsType | null>(null)
-  const [isViewPostOptionsOpen, setIsViewPostOptionsOpen] = useState(false)
+  const [isViewPostOptionsOpen, setIsViewPostOptionsOpen] = useState("")
   const [replies, setReplies] = useState<postsType[]>()
-  const { userInfo } = useUserInfo()
+const { userInfo } = useUserStore(); 
   const { menuRef, posts,setPosts } = useAppContext();
   const router = useRouter()
   const [isOptionsOpen, setIsOptionsOpen] = useState(false)
   const [openOptionMenu, setOpenOptionMenu] = useState("")
+  const [repliesIsLoading, setRepliesIsLoading] = useState(false)
+ 
 
   const getSinglePost = async () => {
 
@@ -72,36 +83,82 @@ const PostDetail = () => {
   // updatePost()
   // },[replies])
   const getReplies = async (postId: string) => {
-    const { data: postsResponse } = await axios.get("/api/posts", { params: { postId,userId:userInfo?._id } });
-    setReplies(postsResponse?.Posts)
+    try {
+      setRepliesIsLoading(true)
+      const { data: postsResponse } = await axios.get("/api/posts", { params: { postId } });
+      setRepliesIsLoading(false);
+      if (postsResponse.status < 200 || postsResponse.status >= 300) {
+        setRepliesIsLoading(false)
+        const errorData = postsResponse.data;
+        throw new Error(errorData.message);
+      }
+      setReplies(postsResponse?.Posts)
+    } catch (error:any) {
+      setRepliesIsLoading(false)
+     toast.error(`${error?.message}`, {
+                         position: "top-right",
+                         autoClose: 3000,
+                         hideProgressBar: false, // Shows progress bar
+                         closeOnClick: true,
+                         pauseOnHover: true,
+                         draggable: true,
+                         progress: undefined,
+                     });
+    }
+   
 
 
   }
   return (
     <>
+    <ToastContainer/>
       <div className=' min-h-screen max-h-screen overflow-y-auto '>
        
        <BackArrowNav moveBack={moveBack} title='Post'/>
 
         {post ? <div className='relative p-3'>
-          {isViewPostOptionsOpen && <TweetActionsMenu menuRef={menuRef} />}
+          {/* {isViewPostOptionsOpen && <TweetActionsMenu menuRef={menuRef} />} */}
           <PostContent post={post} postDetail isViewPostOptionsOpen={isViewPostOptionsOpen} setIsViewPostOptionsOpen={setIsViewPostOptionsOpen} />
-        </div> : <div className='w-full h-screen flex items-center justify-center'>Loading...</div>}
+        </div> : <div className='w-full h-max  flex items-center justify-center'>
+                <BeatLoader
+                    size={15}
+                    cssOverride={override}
+                    color="#1d9bf0"
+                    style={{ color: "#1d9bf0", display: "block" }}
+                    aria-label="Loading Spinner"
+                    data-testid="loader" /> 
+              </div> }
         <div className='w-full'>
           <TweetReply userName={post?.author?.userName!} profilePic={userInfo?.image!} post={post!} refreshReplies={getSinglePost}  />
 
-          {replies && replies.map((reply: postsType) => (
-            <div key={reply?._id} className='mt-2 '>
-              <div className='px-3'>
-
-            
-            <PostContent isOptionsOpen={isOptionsOpen} post={reply} setIsOptionsOpen={setIsOptionsOpen} openOptionMenu={openOptionMenu} setOpenOptionMenu={setOpenOptionMenu} />
-            </div>
-            <div className="  border-b border-twitterBorder mt-2  "></div>
-            </div>
-            
-          ))}
-
+          {
+              ((replies )
+                ? (replies?.length !== 0  
+                  ?replies?.map((reply: postsType) => (
+                      <div key={reply?._id} className='mt-2 '>
+                            <div className='px-3'>
+                              { <PostContent isOptionsOpen={isOptionsOpen} post={reply} setIsOptionsOpen={setIsOptionsOpen} openOptionMenu={openOptionMenu} setOpenOptionMenu={setOpenOptionMenu} /> }
+                            </div>
+                            <div className="  border-b border-twitterBorder mt-2  "></div>
+                      </div>
+                
+                  ))
+                  : 
+                  <div className='w-full h-[50vh] flex justify-center items-center text-twiterLightGray text-lg'>No Replies</div>
+                  )
+                :
+                
+                <div className='w-full h-[50vh]  flex items-center justify-center'>
+                <BeatLoader
+                    size={15}
+                    cssOverride={override}
+                    color="#1d9bf0"
+                    style={{ color: "#1d9bf0", display: "block" }}
+                    aria-label="Loading Spinner"
+                    data-testid="loader" /> 
+              </div> 
+          )}
+         
         </div>
       </div>
 

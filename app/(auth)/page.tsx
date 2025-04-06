@@ -2,13 +2,13 @@
 
 import { useEffect, useState } from "react";
 import UserNameForm from "../components/userNameForm";
-import useUserInfo from "../hooks/useUserInfo";
+
 import PostTweet from "../components/postTweet";
 import axios from "axios";
 import PostContent from "../components/postContent";
-import en from 'javascript-time-ago/locale/en'
 
-import TimeAgo from 'javascript-time-ago'
+
+
 
 import { useAppContext } from "../contexts/AppContext";
 import { signOut, useSession } from "next-auth/react";
@@ -16,8 +16,11 @@ import { useRouter } from "next/navigation";
 
 import LoadingPage from "../(public)/loadingPage";
 
+// import useUserInfo from "../hooks/useUserInfo";
+import { useUserStore } from "../store/useUserStore";
 
-TimeAgo.addLocale(en)
+
+
 export interface postsType {
 
     author: {
@@ -33,24 +36,39 @@ export interface postsType {
     liked?: boolean
     retweets: number
     retweeted?: boolean,
-    commentsCount:number
-
+    commentsCount:number,
+    parent:postsType,
+    images?:[string]
+ 
 }
 interface RetweetType {
     postId: string;
 }
 
 export default function Home() {
-
+    // const cachedUser = sessionStorage.getItem("userInfo");
+    // const userInfo = JSON.parse(cachedUser)
     const { posts, setPosts } = useAppContext();
     const [isOptionsOpen, setIsOptionsOpen] = useState(false)
-    const { userInfo, userInfoStatus, setUserInfo, setUserInfoStatus } = useUserInfo()
+    //const { userInfo, userInfoStatus, setUserInfo, setUserInfoStatus } = useUserInfo()
     const [openOptionMenu, setOpenOptionMenu] = useState("")
     const router = useRouter()
     // const { data: session } = useSession()
-   
-    useEffect(() => {
+    const setUserInfo = useUserStore((state) => state.setUserInfo);
 
+
+    const { userInfo, userInfoStatus,  } = useUserStore(); 
+   
+    //   if (userInfoStatus === "loading") {
+    //     fetchUserInfo();  // Fetch only if status is still "loading"
+    //   }
+    // }, [userInfoStatus]); 
+
+
+
+
+    useEffect(() => {
+    
 
         getPosts()
     }, [userInfo])
@@ -68,19 +86,19 @@ export default function Home() {
 
             return;
         }
-
+  
  
-        const { data: postsResponse } = await axios.get("/api/posts", { params: { userId: userInfo?._id } });
+        const { data: postsResponse } = await axios.get("/api/posts");
        
 
         setPosts(postsResponse?.Posts);
     }
-
+    
     useEffect(() => {
         if (userInfoStatus === "unauthenticated") {
             router.push("/login");
         }
-    }, [userInfoStatus, router]);
+    }, [userInfoStatus]);
 
     if (posts.length === 0 &&  userInfoStatus === "loading") {
 
@@ -99,7 +117,7 @@ export default function Home() {
         <>
 
 
-            <div className=" min-h-screen max-h-screen overflow-y-auto relative ">
+            <div className=" min-h-screen max-h-screen overflow-y-auto overflow-x-hidden relative ">
 
 
                 <h1 className="font-bold text-lg p-4">
@@ -120,7 +138,7 @@ export default function Home() {
 
                 </div>
                
-                <div onClick={handleLogOut} className="px-3  absolute bottom-2  left-[50%] -translate-x-[50%] py-1 w-max rounded-full bg-white"><button className="text-black font-semibold">Logout</button></div>
+               
             </div>
         </>
     );

@@ -10,10 +10,12 @@ import Like from "@/lib/models/Like";
 import { ObjectId } from "mongodb";
 import mongoose from "mongoose";
 import Retweet from "@/lib/models/Retweet";
+import Follow from "@/lib/models/Follow";
 interface UpdatedPostType {
     _id: string;
     liked: boolean;
     retweeted: boolean;
+    following:boolean;
     [key: string]: any;
 }
 // const getPosts = async (userId: string) => {
@@ -53,29 +55,72 @@ export async function GET(request: Request) {
         const session = await getServerSession(authOptions)
         const { searchParams } = new URL(request.url);
         const id = searchParams.get("id")
+        const currentUserId = searchParams.get("currentUserId")
+        const author = searchParams.get("author")
         const userId = session.user.id
         const postId = searchParams.get("postId");
-        const author = searchParams.get("author")
-      
+       
+        if(currentUserId){
+            const Posts =  await Post.find({author:currentUserId,parent:{$exists:true}}).populate('author').populate({
+                path: "parent",
+                populate: {
+                  path: "author",  
+                },
+              }).sort({ createdAt: -1 }).exec()
+             
+              const userRetweets = await Retweet.find({ userId })
+            const userLikes = await Like.find({ userId })
+            const userFollowers = await Follow.find({ followerId: userId })
+            const userFollowingSet = new Set(userFollowers.map((follow) => follow.followingId.toString()))
+            const likedPostsSet = new Set(userLikes.map((like) => like.postId.toString()))
+            const retweetedPostsSet = new Set(userRetweets.map((retweet) => retweet.postId.toString()))
+            const updatedPosts = Posts.map((post: UpdatedPostType) => ({
+                ...post.toObject(),
+                
+                liked: likedPostsSet.has(post._id.toString()),
+                retweeted: retweetedPostsSet.has(post._id.toString()),
+                following: userFollowingSet.has(post.author._id.toString()),
+                parent: post.parent
+                ? {
+                    ...post.parent.toObject(),
+                    liked: likedPostsSet.has(post.parent._id.toString()),
+                    retweeted: retweetedPostsSet.has(post.parent._id.toString()),
+                    following: post.parent.author
+                        ? userFollowingSet.has(post.parent.author._id.toString())
+                        : false,
+                  }
+                : null,
+            }));
+            return NextResponse.json({ Posts:updatedPosts }, { status: 200 })
+        }
         if (!id) {
            
-            const parent = postId || null;
-            const searchItem = author? {author}:{parent}
-            const Posts = author? await Post.find( {...searchItem, parent: { $exists: false } }).populate('author').sort({ createdAt: -1 }).exec()
-            : await Post.find(searchItem).populate('author').sort({ createdAt: -1 }).exec()
+            let searchFilter;
+             if(postId || author){
+               postId ?  searchFilter = {parent:postId} :searchFilter = {author, parent: { $exists: false }}
+             }else{
+                const userFollowers = await Follow.find({followerId:userId})
+                const idsIFollow = userFollowers.map(f=> f.followingId)
+                searchFilter = {author:{$in:[...idsIFollow, userId]}, parent: { $exists: false } }
+             }
+            
+            const Posts =  await Post.find(searchFilter).populate('author').sort({ createdAt: -1 }).exec()
+       
             const userRetweets = await Retweet.find({ userId })
             const userLikes = await Like.find({ userId })
-          
+            const userFollowers = await Follow.find({ followerId: userId })
+            const userFollowingSet = new Set(userFollowers.map((follow) => follow.followingId.toString()))
             const likedPostsSet = new Set(userLikes.map((like) => like.postId.toString()))
             const retweetedPostsSet = new Set(userRetweets.map((retweet) => retweet.postId.toString()))
             const updatedPosts = Posts.map((post: UpdatedPostType) => ({
                 ...post.toObject(),
                 liked: likedPostsSet.has(post._id.toString()),
-                retweeted: retweetedPostsSet.has(post._id.toString())
+                retweeted: retweetedPostsSet.has(post._id.toString()),
+                following: userFollowingSet.has(post.author._id.toString())
             }));
             
             return NextResponse.json({ Posts: updatedPosts }, { status: 200 })
-           // return NextResponse.json({ message: "No post found" }, { status: 504 })
+           
         }
         if (id) {
           
@@ -94,9 +139,10 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
     try {
         await initMongoose()
-        const { post, senderId, parent } = await request.json();
+        const { post, senderId, parent,images } = await request.json();
         
-        const newPost = await Post.create({ post, author: senderId, parent });
+        const newPost = await Post.create({ post, author: senderId, parent,images });
+        
         if(parent){
             const count = await Post.countDocuments({ parent });
             const ReplyPost = await Post.findById(parent)

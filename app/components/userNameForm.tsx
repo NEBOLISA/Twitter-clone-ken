@@ -1,10 +1,14 @@
 "use client"
 import React, { useEffect, useRef, useState } from 'react'
-import useUserInfo from '../hooks/useUserInfo'
+
 import { useRouter } from 'next/navigation'
 
+// import useUserInfo from '../hooks/useUserInfo'
+import { useUserStore } from '../store/useUserStore'
+
 const UserNameForm = () => {
-    const { userInfo, userInfoStatus } = useUserInfo()
+ 
+    const { userInfo,userInfoStatus} = useUserStore(); 
     const [userName, setUserName] = useState("")
     const [isLoading,setIsLoading]= useState(false)
     const defaultUserName = userInfo?.email.split("@")[0]

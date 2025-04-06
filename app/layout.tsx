@@ -4,8 +4,9 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import SessionProviderWrapper from "./components/sessionProviderWrapper";
 
-import { AppProvider} from "./contexts/AppContext";
+import { AppProvider } from "./contexts/AppContext";
 import { PostProvider } from "./contexts/PostContext";
+
 
 
 
@@ -29,7 +30,7 @@ export default function RootLayout({
   modal
 }: Readonly<{
   children: React.ReactNode;
-  modal:React.ReactNode
+  modal: React.ReactNode
 
 }>) {
 
@@ -42,21 +43,23 @@ export default function RootLayout({
 
           <AppProvider>
             <PostProvider>
-
-        
-
-            
-              <div className=" ">
-
-
-
-                {children}
-
-               {modal}
-
-              </div>
           
-              </PostProvider>
+
+
+
+
+
+                <div className=" ">
+
+
+
+                  {children}
+
+                  {modal}
+
+                </div>
+            
+            </PostProvider>
 
           </AppProvider>
 

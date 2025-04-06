@@ -1,5 +1,5 @@
 import React from 'react'
-import useUserInfo from '../hooks/useUserInfo'
+
 
 const LoadingPage = () => {
     

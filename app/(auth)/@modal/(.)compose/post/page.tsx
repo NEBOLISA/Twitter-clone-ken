@@ -5,17 +5,27 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 import { IoCloseSharp } from "react-icons/io5";
 import ReactTimeAgo from 'react-time-ago';
+import { format as timeAgo } from "timeago.js";
+import { format } from 'date-fns';
+import PostTweet from "@/app/components/postTweet";
+import { useUserStore } from "@/app/store/useUserStore";
+// import "@formatjs/intl-relativetimeformat"
+// import "@formatjs/intl-relativetimeformat/polyfill";
+// import "@formatjs/intl-relativetimeformat/locale/en"; 
 const ComposePostModal = () => {
   const router = useRouter();
  
 
   //const { postToReply } = usePostContext()
   const postToReply = JSON.parse(localStorage.getItem("post")!)
-
+  const postDate = new Date(postToReply?.createdAt ?? Date.now());
+  const now = new Date();
+  const timeDifference = (now.getTime() - postDate.getTime()) / (1000 * 60 * 60);
+  const { userInfo  } = useUserStore(); 
   return (
     <div className="fixed w-full inset-0 bg-[#5b708366] z-40 flex justify-center items-center">
 
-      <div className="bg-black px-4 pt-4 pb-1 rounded-3xl w-[40%] h-[90%]  ">
+      <div className="bg-black px-4 pt-4 pb-1 rounded-3xl lg:w-[40%] md:w-[80%] w-[95%] h-[90%]  ">
 
         <div className="w-full">
           <div className="flex justify-between items-start h-12 ">
@@ -26,7 +36,7 @@ const ComposePostModal = () => {
             <h3 className="text-[#1d9bf0] font-bold text-[15px]">Drafts</h3>
           </div>
 
-          <div className="grid grid-cols-[10%_100%] mt-4 w-full">
+          <div className="flex items-center gap-4 mt-4 w-full">
 
             <div className='z-40 self-start'>
               <div className='rounded-full w-10 overflow-hidden' >
@@ -38,7 +48,7 @@ const ComposePostModal = () => {
 
             <div className=' w-full'>
               <div className='flex  justify-between'>
-                <div className='flex items-center gap-1 '>
+                <div className='flex items-center  gap-1 flex-row flex-wrap '>
 
                   <div className='font-bold '>{postToReply?.author?.name}</div>
 
@@ -50,7 +60,8 @@ const ComposePostModal = () => {
 
                     <div className='flex gap-1  items-center '>
                       <div className=' text-md text-[#71767b] font-medium'>.</div>
-                    {postToReply?.createdAt &&  <ReactTimeAgo className='text-sm text-[#71767b] font-medium' date={postToReply?.createdAt!} locale="en-US" timeStyle="twitter" />}
+                      {postToReply?.createdAt && <p className='text-sm text-[#71767b] font-medium'>{timeDifference < 24 ? timeAgo(postDate) : format(postDate, "MMM d")}</p>}
+                    {/* {postToReply?.createdAt &&  <ReactTimeAgo className='text-sm text-[#71767b] font-medium' date={postToReply?.createdAt!} locale="en-US" timeStyle="twitter" />} */}
                     </div>
                   </div>
 
@@ -64,7 +75,10 @@ const ComposePostModal = () => {
               </div>
             </div>
           </div>
-
+          <div className='h-16  border-l-2 border-[#333639]  left-[18px] relative -mt-8 '></div>
+          <PostTweet user={userInfo!} modal
+          // onPost={() => { getPosts() }} 
+          />
         </div>
 
 

@@ -6,24 +6,30 @@ import { BsEmojiSmile } from "react-icons/bs";
 import { useAppContext } from '../contexts/AppContext';
 import { usePostContext } from '../contexts/PostContext';
 
+
 const MediaComponent = ({isMainPage,isReplyPage}:{isMainPage?:boolean,isReplyPage?:boolean}) => {
-    const { setPreview, setFile,replyFile,setReplyFile, replyPreview, setReplyPreview,  } = useAppContext()
+    const { setPreview,preview, setFile,replyFile,setReplyFile, replyPreview, setReplyPreview,  } = useAppContext()
     const {setEmojiBoxOpen, emojiBoxOpen,replyEmojiBoxOpen, setReplyEmojiBoxOpen}=usePostContext()
 
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const selectedFile = e.target.files?.[0];
-        if (selectedFile) {
-            if(isMainPage){
-                setFile(selectedFile);
-                setPreview(URL.createObjectURL(selectedFile));
-            }else if(isReplyPage){
-                setReplyFile(selectedFile);
-                setReplyPreview(URL.createObjectURL(selectedFile));
+        const selectedFiles = e.target.files ? Array.from(e.target.files) : [];
+        
+        if (selectedFiles.length > 0) {
+            const filePreviews = selectedFiles.map(file => URL.createObjectURL(file));
+    
+            if (isMainPage) {
+                setFile((prev)=>([...(prev||[]), ...selectedFiles]));
+                setPreview((prev)=>([...(prev || []), ...filePreviews]));
+                console.log({preview})
+            } else if (isReplyPage) {
+                setReplyFile(selectedFiles);
+                setReplyPreview(filePreviews);
             }
         }
-    }
-
+    };
+    
+    
     const handleEmoji = () => {
         isMainPage ?
         setEmojiBoxOpen(!emojiBoxOpen): setReplyEmojiBoxOpen(!replyEmojiBoxOpen)

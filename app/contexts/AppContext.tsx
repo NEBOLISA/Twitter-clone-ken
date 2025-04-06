@@ -9,14 +9,14 @@ type AppContextType = {
   buttonRef: React.RefObject<HTMLDivElement | null>;
   posts: postsType[];
   setPosts: React.Dispatch<React.SetStateAction<postsType[]>>;
-  file: File | null;
-  setFile: React.Dispatch<React.SetStateAction<File | null>>;
-  preview: string | null;
-  setPreview: React.Dispatch<React.SetStateAction<string | null>>;
-  replyFile: File | null;
-  setReplyFile: React.Dispatch<React.SetStateAction<File | null>>;
-  replyPreview: string | null;
-  setReplyPreview: React.Dispatch<React.SetStateAction<string | null>>;
+  file: File[] | null;
+  setFile: React.Dispatch<React.SetStateAction<File[] | null>>;
+  preview: string[] | null;
+  setPreview: React.Dispatch<React.SetStateAction<string[] | null>>;
+  replyFile: File[] | null;
+  setReplyFile: React.Dispatch<React.SetStateAction<File[] | null>>;
+  replyPreview: string[] | null;
+  setReplyPreview: React.Dispatch<React.SetStateAction<string[] | null>>;
   post: string; 
   setPost: React.Dispatch<React.SetStateAction<string>>;
   emojiRef:React.RefObject<HTMLDivElement | null>
@@ -32,10 +32,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const menuRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLDivElement>(null);
  const [posts, setPosts] = useState<postsType[]>([])
- const [file, setFile] = useState<File | null>(null);
- const [preview, setPreview] = useState<string | null>(null);
- const [replyFile,setReplyFile] = useState<File | null>(null);
- const [replyPreview, setReplyPreview] = useState<string | null>(null);
+ const [file, setFile] = useState<File[] | null>(null);
+ const [preview, setPreview] = useState<string[] | null>(null);
+ const [replyFile,setReplyFile] = useState<File[] | null>(null);
+ const [replyPreview, setReplyPreview] = useState<string[] | null>(null);
   const [post, setPost] = useState<string>("")
    const [postState, setPostState] = useState<PostStateProps>({
           liked:  false,

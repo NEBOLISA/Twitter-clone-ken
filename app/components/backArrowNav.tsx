@@ -4,9 +4,11 @@ interface ArrowBackCompPropTypes {
  moveBack:()=>void
  title:string | null
  profile?:boolean
+ postsCount?:number
 }
 
-const BackArrowNav = ({moveBack,title="Tweet",profile}:ArrowBackCompPropTypes) => {
+const BackArrowNav = ({moveBack,title="Tweet",profile,postsCount}:ArrowBackCompPropTypes) => {
+ 
   return (
     <div className={`flex  gap-8  pl-3 mb-1 `}>
       
@@ -15,7 +17,7 @@ const BackArrowNav = ({moveBack,title="Tweet",profile}:ArrowBackCompPropTypes) =
           </div>
           <div>
           <h3 className='text-xl font-extrabold'>{title}</h3>
-          <h3 className='text-twiterLightGray text-[13px] font-medium'>172 posts</h3>
+          {postsCount && <h3 className='text-twiterLightGray text-[13px] font-medium'>{`${postsCount} ${postsCount && postsCount<=1 ? "post" :"posts"}`} </h3>}
           </div>
         
         </div>

@@ -9,7 +9,7 @@ import { FiShare } from "react-icons/fi";
 import { BiBarChart } from "react-icons/bi";
 import axios from 'axios';
 
-import useUserInfo from '../hooks/useUserInfo';
+
 import RetweetMenu from './retweetMenu';
 
 import { useAppContext } from '../contexts/AppContext';
@@ -19,6 +19,9 @@ import { postsType } from '../(auth)/page';
 import Link from 'next/link';
 import Router from 'next/router';
 import { useRouter } from 'next/navigation';
+
+// import useUserInfo from '../hooks/useUserInfo';
+import { useUserStore } from '../store/useUserStore';
 interface PostActionBtnsProps {
     singlePost?: boolean
     post: postsType | undefined
@@ -39,7 +42,7 @@ export interface PostStateProps {
 
 const PostActionBtns = ({ post, onLike, singlePost }: PostActionBtnsProps) => {
     
-    const { userInfo } = useUserInfo()
+   const { userInfo } = useUserStore(); 
     const retweetMenuRef = useRef<HTMLDivElement>(null)
     const retweetButtonRef = useRef<HTMLDivElement>(null)
     const [openRetweetMenuopen, setOpenRetweetMenuOpen] = useState<string | undefined>("")
@@ -160,7 +163,7 @@ const PostActionBtns = ({ post, onLike, singlePost }: PostActionBtnsProps) => {
     const handleUndoneRetweet = () => {
         if (postState.retweeted) {
             const undoRetweet = axios.put(`/api/posts/retweet`, { userId: userInfo?._id, postId: post?._id })
-            console.log(undoRetweet)
+           
             //setPostState((prev) => ({ ...prev, retweeted: false, retweetNum: prev.retweetNum - 1 }))
             updatePostState(post?._id!, { retweeted: false, retweetNum: postState.retweetNum - 1 })
             setOpenRetweetMenuOpen("");
@@ -203,7 +206,7 @@ const PostActionBtns = ({ post, onLike, singlePost }: PostActionBtnsProps) => {
 
             <div onClick={()=>handleComposePost()}  className="text-md group text-[#71767b] cursor-pointer font-medium flex items-center gap-[.3px]">
                 <div className="p-2 rounded-full transition-all duration-[200ms] flex justify-center items-center group-hover:bg-twitterBlue group-hover:bg-opacity-10">
-                    <BsChat className="w-5 h-5 text-inherit transition-all duration-[200ms] group-hover:text-twitterBlue" />
+                    <BsChat className="sm:w-5 sm:h-5 w-3 h-3 text-inherit transition-all duration-[200ms] group-hover:text-twitterBlue" />
                 </div>
                 <p className="text-sm -ml-[4px] transition-all duration-[200ms] group-hover:text-twitterBlue">{postState?.commentsCount}</p>
             </div>
@@ -211,7 +214,7 @@ const PostActionBtns = ({ post, onLike, singlePost }: PostActionBtnsProps) => {
             <div onClick={handleRetweetMenuToggle} ref={retweetButtonRef} className=' text-md z-20   text-[#71767b] cursor-pointer group font-medium flex items-center gap-[.3px]'>
                 <div className='p-2 rounded-full transition-all duration-[200ms] flex justify-center items-center group-hover:bg-green-400  group-hover:bg-opacity-10'>
 
-                    <AiOutlineRetweet className={`${postState.retweeted && 'text-green-400'} w-5 h-5 transition-all duration-[200ms] group-hover:text-green-400`} />
+                    <AiOutlineRetweet className={`${postState.retweeted && 'text-green-400'} sm:w-5 sm:h-5 w-3 h-3 transition-all duration-[200ms] group-hover:text-green-400`} />
                 </div>
                 <div className={`${postState.retweeted && 'text-green-400'} text-sm -ml-[4px] transition-all duration-[200ms] group-hover:text-green-400`}><FlipNumbers height={12} width={12} color={`
                     ${postState.retweeted && "text-green-4"} `} play perspective={100} numbers={postState?.retweetNum.toString()} /></div>
@@ -220,7 +223,7 @@ const PostActionBtns = ({ post, onLike, singlePost }: PostActionBtnsProps) => {
                 className=' text-md     text-[#71767b] cursor-pointer group font-medium flex items-center gap-[.3px]'>
                 <div className='p-2 transition-all duration-[200ms]  rounded-full flex justify-center items-center group-hover:bg-pink-400  group-hover:bg-opacity-10'>
 
-                    <IoMdHeart className={`${postState?.liked ? 'text-pink-600 fill-pink-600 stroke-[21px] stroke-pink-600' : "fill-transparent stroke-[21px] stroke-[#71767b] "} w-5 transition-all duration-[200ms]  h-5 group-hover:text-pink-600 group-hover:stroke-pink-600`} />
+                    <IoMdHeart className={`${postState?.liked ? 'text-pink-600 fill-pink-600 stroke-[21px] stroke-pink-600' : "fill-transparent stroke-[21px] stroke-[#71767b] "} sm:w-5 transition-all duration-[200ms]  sm:h-5 w-3 h-3 group-hover:text-pink-600 group-hover:stroke-pink-600`} />
                 </div>
                 <div className={`${(postState?.liked === true) && 'text-pink-600'} text-[#71767b] text-sm -ml-[4px] transition-all duration-[200ms]  group-hover:text-pink-600`}><FlipNumbers height={12} width={12} color={`
                     ${postState.retweeted && "text-pink-600"} `} play perspective={100} numbers={postState?.likeNum.toString()} /></div>
@@ -232,7 +235,7 @@ const PostActionBtns = ({ post, onLike, singlePost }: PostActionBtnsProps) => {
 
                     <div className="text-md group text-[#71767b] cursor-pointer font-medium flex items-center gap-[.3px]">
                         <div className="p-2 rounded-full transition-all duration-[200ms] flex justify-center items-center group-hover:bg-twitterBlue group-hover:bg-opacity-10">
-                            <BiBarChart className="w-5 h-5 text-inherit transition-all duration-[200ms] group-hover:text-twitterBlue" />
+                            <BiBarChart className="sm:w-5 sm:h-5 w-3 h-3 text-inherit transition-all duration-[200ms] group-hover:text-twitterBlue" />
                         </div>
                         <p className="text-sm -ml-[4px] transition-all duration-[200ms] group-hover:text-twitterBlue">{postState?.commentsCount}</p>
                     </div>
@@ -240,14 +243,14 @@ const PostActionBtns = ({ post, onLike, singlePost }: PostActionBtnsProps) => {
                         <div onClick={handleBookmark} className=' text-md    text-[#71767b] cursor-pointer group font-medium flex items-center'>
                             <div className='p-2 transition-all duration-[200ms]  rounded-full flex justify-center items-center group-hover:bg-twitterBlue  group-hover:bg-opacity-10'>
 
-                                <IoBookmarkSharp className={`${postState.bookmarked ? 'text-twitterBlue fill-twitterBlue stroke-[21px] stroke-twitterBlue' : "fill-transparent stroke-[21px] stroke-[#71767b] "} w-5 transition-all duration-[200ms] h-5 group-hover:text-twitterBlue  group-hover:stroke-twitterBlue `} />
+                                <IoBookmarkSharp className={`${postState.bookmarked ? 'text-twitterBlue fill-twitterBlue stroke-[21px] stroke-twitterBlue' : "fill-transparent stroke-[21px] stroke-[#71767b] "} sm:w-5 transition-all duration-[200ms] sm:h-5 w-3 h-3 group-hover:text-twitterBlue  group-hover:stroke-twitterBlue `} />
                             </div>
 
                         </div>
                         <div className=' text-md    text-[#71767b] cursor-pointer group font-medium flex items-center'>
                             <div className='p-2 rounded-full flex justify-center items-center hover:bg-twitterBlue transition-all duration-[200ms]  hover:bg-opacity-10'>
 
-                                <FiShare className='w-5 h-5 transition-all duration-[200ms] group-hover:text-twitterBlue ' />
+                                <FiShare className='sm:w-5 sm:h-5 w-3 h-3 transition-all duration-[200ms] group-hover:text-twitterBlue ' />
                             </div>
 
                         </div>
