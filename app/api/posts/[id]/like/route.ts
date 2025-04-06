@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import Post from "@/lib/models/Post";
 import Like from "@/lib/models/Like";
 
-export async function GET(request: NextRequest, context: { params: { id: string } }) {
+export async function GET(request: NextRequest) {
     try {
         await initMongoose()
         const { searchParams } = new URL(request.url);
@@ -24,11 +24,11 @@ export async function GET(request: NextRequest, context: { params: { id: string 
 
 
 
-export async function POST(request: NextRequest, context: { params: { id: string } }) {
+export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
     try {
         await initMongoose()
        
-        const id =  context.params.id
+        const id =  params.id
         const postId = id
 
         const { userId } = await request.json();

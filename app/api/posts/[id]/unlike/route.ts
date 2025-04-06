@@ -4,11 +4,11 @@ import { NextRequest, NextResponse } from "next/server";
 import Post from "@/lib/models/Post";
 import Like from "@/lib/models/Like";
 
-export async function POST(request: NextRequest, context: { params: { id: string } }) {
+export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
     try {
        
 
-        const id = context.params.id
+        const id = params.id
         const postId = id
 
         const { userId } = await request.json();
