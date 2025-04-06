@@ -4,7 +4,8 @@ import { NextResponse } from "next/server";
 import Post from "@/lib/models/Post";
 import Like from "@/lib/models/Like";
 import { getServerSession } from "next-auth";
-import { authOptions } from "../../auth/[...nextauth]/route";
+import { authOptions } from "@/lib/auth";
+
 
 export async function GET(request: Request) {
     try {

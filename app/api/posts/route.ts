@@ -4,13 +4,14 @@ import User from "@/lib/models/User";
 import { initMongoose } from "@/lib/mongoose";
 import { getServerSession, unstable_getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
-import { authOptions } from "../auth/[...nextauth]/route";
+
 import Post from "@/lib/models/Post";
 import Like from "@/lib/models/Like";
 import { ObjectId } from "mongodb";
 import mongoose from "mongoose";
 import Retweet from "@/lib/models/Retweet";
 import Follow from "@/lib/models/Follow";
+import { authOptions } from "@/lib/auth";
 interface UpdatedPostType {
     _id: string;
     liked: boolean;
@@ -18,24 +19,8 @@ interface UpdatedPostType {
     following:boolean;
     [key: string]: any;
 }
-// const getPosts = async (userId: string) => {
-//     const Posts = await Post.find({ parent: null }).populate('author').sort({ createdAt: -1 }).exec()
-//     const userRetweets = await Retweet.find({ userId })
-//     const userLikes = await Like.find({ userId })
-//     const likedPostsSet = new Set(userLikes.map((like) => like.postId.toString()))
-//     const retweetedPostsSet = new Set(userRetweets.map((retweet) => retweet.postId.toString()))
-//     const updatedPosts = Posts.map((post: UpdatedPostType) => ({
-//         ...post.toObject(),
-//         liked: likedPostsSet.has(post._id.toString()),
-//         retweeted: retweetedPostsSet.has(post._id.toString())
-//     }));
-//     return NextResponse.json({ Posts: updatedPosts }, { status: 200 })
-// }
 
-// const getReplies = async (postId: string) => {
-//     const Replies = await Post.find({ parent: postId }).populate('parent')
-//     return NextResponse.json({ Posts: Replies }, { status: 200 })
-// }
+
 const getSinglePost = async (postId: string,userId:string |null) => {
    
     const post = await Post.findById(postId).populate('author').exec()

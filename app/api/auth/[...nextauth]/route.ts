@@ -8,7 +8,7 @@ import GoogleProvider from "next-auth/providers/google";
 
 
 
-export const authOptions = {
+ const authOptions = {
   // Configure one or more authentication providers
  adapter: MongoDBAdapter(client),
   session:{

@@ -2,11 +2,12 @@
 
 import User from "@/lib/models/User";
 import { initMongoose } from "@/lib/mongoose";
-import { getServerSession, unstable_getServerSession } from "next-auth";
-import { NextRequest, NextResponse } from "next/server";
-import { authOptions } from "../auth/[...nextauth]/route";
+import { getServerSession } from "next-auth";
+import {  NextResponse } from "next/server";
+
 import Follow from "@/lib/models/Follow";
 import Post from "@/lib/models/Post";
+import { authOptions } from "@/lib/auth";
 
 export async function GET(request: Request) {
   await initMongoose()
@@ -14,10 +15,8 @@ export async function GET(request: Request) {
   const id = searchParams.get("id")
   const userName = searchParams.get("userName")
   const session = await getServerSession(authOptions)
-  //  if(!id){
 
-  //   return NextResponse.json({error:"id required"}, {status:400})
-  //  }
+
   if (!id && !userName) {
     return NextResponse.json({ error: "id or userName required" }, { status: 400 });
   }

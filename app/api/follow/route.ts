@@ -2,8 +2,9 @@
 import { initMongoose } from "@/lib/mongoose";
 import { getServerSession } from "next-auth";
 import {  NextResponse } from "next/server";
-import { authOptions } from "../auth/[...nextauth]/route";
+
 import Follow from "@/lib/models/Follow";
+import { authOptions } from "@/lib/auth";
 
 export async function GET(request: Request) {
   await initMongoose()

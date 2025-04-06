@@ -1,10 +1,11 @@
 
 
+import { authOptions } from "@/lib/auth";
 import User from "@/lib/models/User";
 import { initMongoose } from "@/lib/mongoose";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
-import { authOptions } from "../auth/[...nextauth]/route";
+
 
 
 export async function POST(request: Request) {
