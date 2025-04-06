@@ -29,7 +29,7 @@ const ComposePostModal = () => {
   const now = new Date();
   let timeDifference;
   if(postDate){
-     timeDifference = (now.getTime() - postDate!.getTime()) / (1000 * 60 * 60);
+     timeDifference = (now.getTime() - postDate!?.getTime()) / (1000 * 60 * 60);
   }
  
   
