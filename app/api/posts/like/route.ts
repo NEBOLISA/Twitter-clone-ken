@@ -34,11 +34,11 @@ export async function GET(request: Request) {
 
 
 
-export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
     try {
         await initMongoose()
-       
-        const id = params.id
+       const {id} = await params
+       //const id = params.id
         const postId = id
 
         const { userId } = await request.json();
