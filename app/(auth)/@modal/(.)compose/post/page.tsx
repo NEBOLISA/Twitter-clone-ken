@@ -1,22 +1,18 @@
 "use client";
-import { postsType } from "@/app/(auth)/page";
-import { usePostContext } from "@/app/contexts/PostContext";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect } from "react";
+
+import { useRouter,} from "next/navigation";
+
 import { IoCloseSharp } from "react-icons/io5";
-import ReactTimeAgo from 'react-time-ago';
+
 import { format as timeAgo } from "timeago.js";
 import { format } from 'date-fns';
 import PostTweet from "@/app/components/postTweet";
 import { useUserStore } from "@/app/store/useUserStore";
-// import "@formatjs/intl-relativetimeformat"
-// import "@formatjs/intl-relativetimeformat/polyfill";
-// import "@formatjs/intl-relativetimeformat/locale/en"; 
+
 const ComposePostModal = () => {
   const router = useRouter();
  
 
-  //const { postToReply } = usePostContext()
   const postToReply = JSON.parse(localStorage.getItem("post")!)
   const postDate = new Date(postToReply?.createdAt ?? Date.now());
   const now = new Date();
@@ -61,7 +57,7 @@ const ComposePostModal = () => {
                     <div className='flex gap-1  items-center '>
                       <div className=' text-md text-[#71767b] font-medium'>.</div>
                       {postToReply?.createdAt && <p className='text-sm text-[#71767b] font-medium'>{timeDifference < 24 ? timeAgo(postDate) : format(postDate, "MMM d")}</p>}
-                    {/* {postToReply?.createdAt &&  <ReactTimeAgo className='text-sm text-[#71767b] font-medium' date={postToReply?.createdAt!} locale="en-US" timeStyle="twitter" />} */}
+                    
                     </div>
                   </div>
 
@@ -77,7 +73,7 @@ const ComposePostModal = () => {
           </div>
           <div className='h-16  border-l-2 border-[#333639]  left-[18px] relative -mt-8 '></div>
           <PostTweet user={userInfo!} modal
-          // onPost={() => { getPosts() }} 
+       
           />
         </div>
 

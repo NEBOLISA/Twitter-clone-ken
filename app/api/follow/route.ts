@@ -1,9 +1,7 @@
 
-
-import User from "@/lib/models/User";
 import { initMongoose } from "@/lib/mongoose";
-import { getServerSession, unstable_getServerSession } from "next-auth";
-import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import {  NextResponse } from "next/server";
 import { authOptions } from "../auth/[...nextauth]/route";
 import Follow from "@/lib/models/Follow";
 
@@ -13,13 +11,8 @@ export async function GET(request: Request) {
  return NextResponse.json( "ok");
 }
 
-export async function PUT(request: Request) {
-// const session = await getServerSession(authOptions)
-// if (!session || !session.user) {
-//   return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-// }
-//   const { userName } = await request.json();
-//  const updatedUser = await User.findByIdAndUpdate(session.user.id, {userName},{new:true})
+export async function PUT() {
+
   return NextResponse.json({ message: "User updated" });
 }
 

@@ -1,5 +1,5 @@
 "use client"
-import BackArrowNav from '@/app/components/backArrowNav'
+
 import ProfileComponent from '@/app/components/profileComponent'
 import { useUserStore } from '@/app/store/useUserStore'
 import { useParams } from 'next/navigation'
@@ -14,7 +14,7 @@ const Profile = () => {
   const isUserProfile = userInfo?.userName === userName
   return (
     <div className='min-h-screen max-h-screen overflow-y-auto'>
-   <ProfileComponent moveBack={moveBack} isUserProfile={isUserProfile} userName={userName?.toString()!}/>
+   <ProfileComponent moveBack={moveBack} isUserProfile={isUserProfile} userName={userName ?userName?.toString():""}/>
    </div>
   )
 }

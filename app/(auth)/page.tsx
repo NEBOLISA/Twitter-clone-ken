@@ -11,7 +11,7 @@ import PostContent from "../components/postContent";
 
 
 import { useAppContext } from "../contexts/AppContext";
-import { signOut, useSession } from "next-auth/react";
+import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
 import LoadingPage from "../(public)/loadingPage";
@@ -41,28 +41,22 @@ export interface postsType {
     images?:[string]
  
 }
-interface RetweetType {
-    postId: string;
-}
+
 
 export default function Home() {
-    // const cachedUser = sessionStorage.getItem("userInfo");
-    // const userInfo = JSON.parse(cachedUser)
+    
     const { posts, setPosts } = useAppContext();
     const [isOptionsOpen, setIsOptionsOpen] = useState(false)
-    //const { userInfo, userInfoStatus, setUserInfo, setUserInfoStatus } = useUserInfo()
+   
     const [openOptionMenu, setOpenOptionMenu] = useState("")
     const router = useRouter()
-    // const { data: session } = useSession()
+  
     const setUserInfo = useUserStore((state) => state.setUserInfo);
 
 
     const { userInfo, userInfoStatus,  } = useUserStore(); 
    
-    //   if (userInfoStatus === "loading") {
-    //     fetchUserInfo();  // Fetch only if status is still "loading"
-    //   }
-    // }, [userInfoStatus]); 
+   
 
 
 
@@ -73,11 +67,7 @@ export default function Home() {
         getPosts()
     }, [userInfo])
 
-    async function handleLogOut() {
-        setUserInfo(null)
-        await signOut()
-
-    }
+   
 
     const getPosts = async () => {
         if (!userInfo) {

@@ -3,7 +3,6 @@ import { postsType } from '@/app/(auth)/page';
 import BackArrowNav from '@/app/components/backArrowNav';
 
 import PostContent from '@/app/components/postContent';
-import TweetActionsMenu from '@/app/components/tweetActionsMenu';
 import TweetReply from '@/app/components/tweetReply';
 import { useAppContext } from '@/app/contexts/AppContext';
 
@@ -12,7 +11,7 @@ import { useUserStore } from '@/app/store/useUserStore';
 
 
 import axios from 'axios';
-import Link from 'next/link';
+
 import { useParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 import React, { CSSProperties, useEffect, useState } from 'react'
@@ -34,11 +33,11 @@ const PostDetail = () => {
   const [isViewPostOptionsOpen, setIsViewPostOptionsOpen] = useState("")
   const [replies, setReplies] = useState<postsType[]>()
 const { userInfo } = useUserStore(); 
-  const { menuRef, posts,setPosts } = useAppContext();
-  const router = useRouter()
+
+ 
   const [isOptionsOpen, setIsOptionsOpen] = useState(false)
   const [openOptionMenu, setOpenOptionMenu] = useState("")
-  const [repliesIsLoading, setRepliesIsLoading] = useState(false)
+  // const [repliesIsLoading, setRepliesIsLoading] = useState(false)
  
 
   const getSinglePost = async () => {
@@ -73,28 +72,20 @@ const { userInfo } = useUserStore();
   const moveBack = () => {
     window.history.go(-1);
   }
-  // const updatePost =async()=>{
-   
-  //   const response = await axios.get(`/api/posts?id=${id}`)
-  //   console.log(response?.data?.post?.commentsCount)
-  // setPost((prev)=>prev && ({...prev, ...response?.data?.post}))
-  // }
-  // useEffect(()=>{
-  // updatePost()
-  // },[replies])
+  
   const getReplies = async (postId: string) => {
     try {
-      setRepliesIsLoading(true)
+      // setRepliesIsLoading(true)
       const { data: postsResponse } = await axios.get("/api/posts", { params: { postId } });
-      setRepliesIsLoading(false);
+      // setRepliesIsLoading(false);
       if (postsResponse.status < 200 || postsResponse.status >= 300) {
-        setRepliesIsLoading(false)
+        // setRepliesIsLoading(false)
         const errorData = postsResponse.data;
         throw new Error(errorData.message);
       }
       setReplies(postsResponse?.Posts)
     } catch (error:any) {
-      setRepliesIsLoading(false)
+      // setRepliesIsLoading(false)
      toast.error(`${error?.message}`, {
                          position: "top-right",
                          autoClose: 3000,
@@ -129,7 +120,14 @@ const { userInfo } = useUserStore();
                     data-testid="loader" /> 
               </div> }
         <div className='w-full'>
-          <TweetReply userName={post?.author?.userName!} profilePic={userInfo?.image!} post={post!} refreshReplies={getSinglePost}  />
+          {post && (
+            <TweetReply 
+              userName={post.author?.userName || ""} 
+              profilePic={userInfo ? userInfo.image : ""} 
+              post={post} 
+              refreshReplies={getSinglePost} 
+            />
+          )}
 
           {
               ((replies )
