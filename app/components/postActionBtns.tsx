@@ -49,7 +49,7 @@ const PostActionBtns = ({ post, onLike, singlePost }: PostActionBtnsProps) => {
     const { postStates, updatePostState, setPostToReply } = usePostContext()
  const router = useRouter()
 
-    let postState = postStates[post?._id! ] || { 
+    const postState = postStates[post?._id! ] || { 
         liked: false, 
         likeNum: 0, 
         retweeted:false, 
