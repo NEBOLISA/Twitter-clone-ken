@@ -7,6 +7,7 @@ import PostTweet from "../components/postTweet";
 import axios from "axios";
 import PostContent from "../components/postContent";
 
+import { GiHamburgerMenu } from "react-icons/gi";
 
 
 
@@ -18,6 +19,7 @@ import LoadingPage from "../(public)/loadingPage";
 
 // import useUserInfo from "../hooks/useUserInfo";
 import { useUserStore } from "../store/useUserStore";
+import Sidebar from "../components/sidebar";
 
 
 
@@ -50,7 +52,7 @@ export default function Home() {
    
     const [openOptionMenu, setOpenOptionMenu] = useState("")
     const router = useRouter()
-  
+     const [isSidebarOpen, setIsSideBarOpen] = useState(false)
     const setUserInfo = useUserStore((state) => state.setUserInfo);
 
 
@@ -103,16 +105,33 @@ export default function Home() {
     if (userInfoStatus === undefined) {
         return null; 
       }
+      const openSidebar = ()=>{
+        setIsSideBarOpen(true)
+       
+      }
+      const handleSidebarClose = ()=>{
+        setIsSideBarOpen(false)
+        
+      }
     return (
         <>
 
 
             <div className=" min-h-screen max-h-screen overflow-y-auto overflow-x-hidden relative ">
+                 {
+                     <div className={`${isSidebarOpen ? "translate-x-0 opacity-100 visible" : "-translate-x-full opacity-0 invisible"} transition-all duration-300 transform fixed left-0 top-0 bottom-0 w-[60%] bg-black z-50`}
+>
+                         <Sidebar userInfo={userInfo!} isSidebarOpen={isSidebarOpen} handleSidebarClose={handleSidebarClose} setIsSideBarOpen={setIsSideBarOpen}/>
+                    </div>
+                 }
+                 <div className="flex items-center justify-start md:block md:pl-0 gap-6 pl-3">
+                 <GiHamburgerMenu className="w-7 h-7 md:hidden" onClick={openSidebar}/>
 
-
-                <h1 className="font-bold text-lg p-4">
+                 <h1 className="font-bold text-lg p-4">
                     Home
                 </h1>
+                 </div>
+               
                  <PostTweet user={userInfo!} onPost={() => { getPosts() }} />
                 <div className="">
 

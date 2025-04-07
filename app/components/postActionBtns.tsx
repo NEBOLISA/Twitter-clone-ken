@@ -57,18 +57,7 @@ const PostActionBtns = ({ post, onLike, singlePost }: PostActionBtnsProps) => {
         bookmarked: false, 
         commentsCount:0
     }
-    // useEffect(() => {
-    //    if (post?._id ) {
-    //     // if (post?._id && !postStates[post?._id]) {
-    //         updatePostState(post?._id, { 
-    //             liked: post?.liked || false, 
-    //             likeNum: post?.likes || 0, 
-    //             retweeted: post?.retweeted || false, 
-    //             retweetNum: post?.retweets || 0, 
-    //             commentsCount:post?.commentsCount || 0,
-    //             bookmarked: false })
-    //     }
-    // }, [post, postStates, updatePostState])
+  
     useEffect(() => {
         if (post?._id) {
             updatePostState(post?._id, {
