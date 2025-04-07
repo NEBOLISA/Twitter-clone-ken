@@ -20,6 +20,7 @@ import LoadingPage from "../(public)/loadingPage";
 // import useUserInfo from "../hooks/useUserInfo";
 import { useUserStore } from "../store/useUserStore";
 import Sidebar from "../components/sidebar";
+import { IoCloseSharp } from "react-icons/io5";
 
 
 
@@ -53,7 +54,7 @@ export default function Home() {
     const [openOptionMenu, setOpenOptionMenu] = useState("")
     const router = useRouter()
      const [isSidebarOpen, setIsSideBarOpen] = useState(false)
-    const setUserInfo = useUserStore((state) => state.setUserInfo);
+   // const setUserInfo = useUserStore((state) => state.setUserInfo);
 
 
     const { userInfo, userInfoStatus,  } = useUserStore(); 
@@ -65,7 +66,7 @@ export default function Home() {
 
     useEffect(() => {
     
-
+       
         getPosts()
     }, [userInfo])
 
@@ -87,6 +88,7 @@ export default function Home() {
     }
     
     useEffect(() => {
+       
         if (userInfoStatus === "unauthenticated") {
             router.push("/login");
         }
@@ -108,6 +110,7 @@ export default function Home() {
       const openSidebar = ()=>{
         setIsSideBarOpen(true)
        
+       
       }
       const handleSidebarClose = ()=>{
         setIsSideBarOpen(false)
@@ -119,10 +122,13 @@ export default function Home() {
 
             <div className=" min-h-screen max-h-screen overflow-y-auto overflow-x-hidden relative ">
                  {
-                     <div className={`${isSidebarOpen ? "translate-x-0 opacity-100 visible" : "-translate-x-full opacity-0 invisible"} transition-all duration-300 transform fixed left-0 top-0 bottom-0 w-[60%] bg-black z-50`}
+                     <div className={`${isSidebarOpen ? "translate-x-0 opacity-100 visible" : "-translate-x-full opacity-0 invisible"} h-full transition-all duration-300 transform fixed left-0 top-0 bottom-0 sm:w-[80%] bg-black w-[90%] z-50`}
 >
-                         <Sidebar userInfo={userInfo!} isSidebarOpen={isSidebarOpen} handleSidebarClose={handleSidebarClose} setIsSideBarOpen={setIsSideBarOpen}/>
+                         <Sidebar userInfo={userInfo!} isSidebarOpen={isSidebarOpen}  setIsSideBarOpen={setIsSideBarOpen} handleSidebarClose={handleSidebarClose}   />
+                        
+                                                   
                     </div>
+
                  }
                  <div className="flex items-center justify-start md:block md:pl-0 gap-6 pl-3">
                  <GiHamburgerMenu className="w-7 h-7 md:hidden" onClick={openSidebar}/>

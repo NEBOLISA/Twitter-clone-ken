@@ -27,6 +27,7 @@ export const useUserStore = create<UserStore>((set) => ({
   userInfoStatus: "unauthenticated",
   setUserInfo: (user) => set({ userInfo: user, userInfoStatus: user ? "done" : "unauthenticated" }),
   setUserInfoStatus: (status) => set({ userInfoStatus: status }),
+  
   userProfile:null,
   profile:null,
   setProfile: (profile) =>
