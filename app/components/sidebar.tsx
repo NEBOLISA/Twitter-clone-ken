@@ -112,7 +112,7 @@ const Sidebar = ({userInfo,isSidebarOpen,handleSidebarClose,setIsSideBarOpen}:{u
   return (
    <div ref={sideBarRef} className={'pt-4 flex flex-col w-full md:items-end items-start space-y-2.5 min-h-screen max-h-screen overflow-y-auto relative'}>
     <div onClick={handleSidebarClose} className="w-max p-[5px] cursor-pointer md:hidden  rounded-full  hover:bg-twiterLightGray/25 absolute right-2">
-                                    <IoCloseSharp onClick={() => router.back()} fontWeight={100} className="w-8 h-8  text-white" />
+                                    <IoCloseSharp  fontWeight={100} className="w-8 h-8  text-white" />
     
                                 </div>
    { !isSidebarOpen && <ul  className='flex flex-col w-2/3 h-full lg:items-start items-end'>
@@ -133,10 +133,10 @@ const Sidebar = ({userInfo,isSidebarOpen,handleSidebarClose,setIsSideBarOpen}:{u
        </ul>
 }
      
-     {isSidebarOpen && <ul  className='flex flex-col w-full h-full items-start pl-4 '>
+     {isSidebarOpen && <ul  className='flex flex-col w-full h-full items-start pl-2 sm:pl-4 '>
       {menuItems.map((item, index) => (
          
-          <li key={index} onClick={()=>handleNavigatePage(item.text)} className="flex  w-full items-center gap-8 p-3 px-4 hover:bg-[#e7e9ea1a] rounded-full cursor-pointer">
+          <li key={index} onClick={()=>handleNavigatePage(item.text)} className="flex  w-full items-center gap-6 sm:gap-8 p-3 px-4 hover:bg-[#e7e9ea1a] rounded-full cursor-pointer">
           <span className="material-icons">{item.icon}</span>
                 <span className={`text-xl font-medium block `}>{item.text}</span>
                 
@@ -171,7 +171,7 @@ const Sidebar = ({userInfo,isSidebarOpen,handleSidebarClose,setIsSideBarOpen}:{u
             </div>
         </div>
         {
-          isSidebarOpen &&  <div onClick={handleSideBarMenuOpen} className='flex  items-center    gap-2 '>
+          isSidebarOpen &&  <div onClick={handleSideBarMenuOpen} className='flex  items-center flex-wrap   gap-2 '>
           <img className='rounded-full   w-9 h-9' src={userInfo?.image} alt="profile"  />
           
           <div className=''>

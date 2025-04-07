@@ -20,7 +20,7 @@ export const useFetchUser = () => {
 
       try {
         setUserInfoStatus("loading"); // Set loading state before fetching
-       
+       console.log("inside hook")
          //@ts-ignore
         const res = await fetch(`/api/users?id=${session.user.id}`);
         if (res.ok) {
